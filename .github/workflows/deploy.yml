@@ -1,4 +1,4 @@
-name: test
+name: deploy
 
 on:
   workflow_call:
@@ -32,7 +32,7 @@ on:
         type: string
 
 jobs:
-  print_env:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checking-out current branch
@@ -59,28 +59,28 @@ jobs:
           echo "TARGET_BUILD=$target_build" >> $GITHUB_ENV
           echo "VERSION_LABEL=$version_label" >> $GITHUB_ENV
           echo $GITHUB_ENV
-      # # - name: Installing required system-level dependencies
-      # #   run: |
-      # #     curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o ~/awscliv2.zip
-      # #     unzip -q ~/awscliv2.zip -d ~/
-      # #     sudo ~/aws/install
-      # #     sudo apt-get -qq install software-properties-common
-      # #     sudo apt-add-repository universe -y
-      # #     sudo apt-get -qq update
-      # #     sudo apt-get -qq install maven -y
-      # - name: Configuring AWS CLI
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: $AWS_REGION
-      # - name: Setting-up JDK
-      #   if: ${{ inputs.build_type == 'war' }}
-      #   uses: actions/setup-java@v3
-      #   with:
-      #     distribution: temurin
-      #     java-version: 8
-      # - name: Building
-      #   run: ./.github/scripts/build/${{ inputs.build_type }}.sh
-      # - name: Deploying
-      #   run: ./.github/scripts/deploy.sh
+      # - name: Installing required system-level dependencies
+      #   run: |
+      #     curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o ~/awscliv2.zip
+      #     unzip -q ~/awscliv2.zip -d ~/
+      #     sudo ~/aws/install
+      #     sudo apt-get -qq install software-properties-common
+      #     sudo apt-add-repository universe -y
+      #     sudo apt-get -qq update
+      #     sudo apt-get -qq install maven -y
+      - name: Configuring AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: $AWS_REGION
+      - name: Setting-up JDK
+        if: ${{ inputs.build_type == 'war' }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 8
+      - name: Building
+        run: ./.github/scripts/build/${{ inputs.build_type }}.sh
+      - name: Deploying
+        run: ./.github/scripts/deploy.sh
