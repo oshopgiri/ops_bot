@@ -20,10 +20,7 @@ on:
         type: string
       build_type:
         required: true
-        type: choice
-        options:
-          - war
-          - zip
+        type: string
       commit_sha:
         required: true
         type: string
