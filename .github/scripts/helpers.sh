@@ -32,7 +32,7 @@ s3_upload_build () {
   file_path=$1
   s3_url=$2
 
-  aws s3 cp $file_path $s3_url
+  aws s3 cp $file_path $s3_url --no-progress
 }
 
 # EBS
