@@ -38,9 +38,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: 'user: ${{ inputs.github_actor }},
-        deploying branch: ${{ inputs.branch }},
-        to EBS environment: ${{ inputs.aws_ebs_application_name }}[${{ inputs.aws_ebs_environment_name }}]'
+      - name: Logging run context
+        run: |
+          echo " \
+            user: ${{ inputs.github_actor }}, \
+            deploying branch: ${{ inputs.branch }}, \
+            to EBS environment: ${{ inputs.aws_ebs_application_name }}[${{ inputs.aws_ebs_environment_name }}] \
+          "
       - name: Checking-out current branch
         uses: actions/checkout@v3
         with:
