@@ -46,20 +46,21 @@ jobs:
           branch_normailized=${{ inputs.branch }}
           branch_normailized=${branch_normailized#refs/heads/}
           branch_normailized=${branch_normailized//[^[:alnum:]]/-}
-          s3_build_directory=s3://${{ inputs.s3_bucket_name }}/${{ inputs.application_name }}/$branch_normailized/
+          s3_build_sub_directory=${{ inputs.application_name }}/$branch_normailized
+          s3_build_directory=s3://${{ inputs.s3_bucket_name }}/$s3_build_sub_directory/
           target_build=ref-${{ inputs.commit_sha }}.${{ inputs.build_type }}
-          s3_build_key=${{ inputs.application_name }}/$branch_normailized/$target_build
+          s3_build_key=$s3_build_sub_directory/$target_build
           version_label=ver-${{ inputs.commit_sha }}
 
           echo "AWS_EBS_APPLICATION_NAME=${{ inputs.aws_ebs_application_name }}" >> $GITHUB_ENV
           echo "AWS_EBS_ENVIRONMENT_NAME=${{ inputs.aws_ebs_environment_name }}" >> $GITHUB_ENV
           echo "AWS_PAGER=''" >> $GITHUB_ENV
+          echo "BUILD_TYPE=${{ inputs.build_type }}" >> $GITHUB_ENV
           echo "S3_BUCKET_NAME=${{ inputs.s3_bucket_name }}" >> $GITHUB_ENV
           echo "S3_BUILD_KEY=$s3_build_key" >> $GITHUB_ENV
           echo "S3_BUILD_DIRECTORY=$s3_build_directory" >> $GITHUB_ENV
           echo "TARGET_BUILD=$target_build" >> $GITHUB_ENV
           echo "VERSION_LABEL=$version_label" >> $GITHUB_ENV
-          echo $GITHUB_ENV
       # - name: Installing required system-level dependencies
       #   run: |
       #     curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o ~/awscliv2.zip
@@ -87,7 +88,7 @@ jobs:
           mkdir -p $scripts_directory
           curl -o $scripts_directory/helpers.sh https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/helpers.sh
           chmod +x $scripts_directory/helpers.sh
-          curl -o $scripts_directory/build.sh https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/build/${{ inputs.build_type }}.sh
+          curl -o $scripts_directory/build.sh https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/build.sh
           chmod +x $scripts_directory/build.sh
           curl -o $scripts_directory/deploy.sh https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/deploy.sh
           chmod +x $scripts_directory/deploy.sh

@@ -1,20 +1,34 @@
 #!/bin/bash
 
-# JDK
+# Build
 
-build_war () {
-  build_name=$1
+build () {
+  type=$1
+  name=$2
 
-  mvn package -q -f pom.xml
-  mv $(ls ./target/*.war | head -1) ./target/$build_name
+  mkdir build
+
+  case $type in
+    war)
+      __build_war $name
+      ;;
+    zip)
+      __build_zip $name
+      ;;
+  esac
 }
 
-# PHP
+__build_war () {
+  name=$1
 
-build_zip () {
-  build_name=$1
+  mvn package -q -f pom.xml
+  mv $(ls ./target/*.war | head -1) ./build/$name
+}
 
-  zip ./$build_name -r * .[^.]*
+__build_zip () {
+  name=$1
+
+  zip ./build/$name -r * .[^.]*
 }
 
 # S3
