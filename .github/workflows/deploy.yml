@@ -107,6 +107,6 @@ jobs:
             chmod +x $script_path
           done
       - name: Building
-        run: sh $REMOTE_SCRIPT_DIRECTORY/build.sh
+        run: $REMOTE_SCRIPT_DIRECTORY/build.sh
       - name: Deploying
-        run: sh $REMOTE_SCRIPT_DIRECTORY/deploy.sh
+        run: $REMOTE_SCRIPT_DIRECTORY/deploy.sh
