@@ -28,7 +28,7 @@ __build_war () {
 __build_zip () {
   name=$1
 
-  zip ./build/$name -r * .[^.]*
+  zip ./build/$name -qr * .[^.]*
 }
 
 # S3
