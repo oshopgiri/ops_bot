@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./.github/scripts/helpers.sh
+source $REMOTE_SCRIPT_DIRECTORY/helpers.sh
 
 version_exists=$(
   ebs_check_application_version \

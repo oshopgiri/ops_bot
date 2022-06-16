@@ -65,6 +65,7 @@ jobs:
           echo "AWS_EBS_ENVIRONMENT_NAME=${{ inputs.aws_ebs_environment_name }}" >> $GITHUB_ENV
           echo "AWS_PAGER=''" >> $GITHUB_ENV
           echo "BUILD_TYPE=${{ inputs.build_type }}" >> $GITHUB_ENV
+          echo "REMOTE_SCRIPT_DIRECTORY=./.github/remote_scripts" >> $GITHUB_ENV
           echo "S3_BUCKET_NAME=${{ inputs.s3_bucket_name }}" >> $GITHUB_ENV
           echo "S3_BUILD_KEY=$s3_build_key" >> $GITHUB_ENV
           echo "S3_BUILD_DIRECTORY=$s3_build_directory" >> $GITHUB_ENV
@@ -72,7 +73,6 @@ jobs:
           echo "VERSION_LABEL=$version_label" >> $GITHUB_ENV
 
           echo '::set-output name=BRANCH::$branch'
-          echo '::set-output name=REMOTE_SCRIPT_DIRECTORY::./.github/remote_scripts'
       # - name: Installing required system-level dependencies
       #   run: |
       #     curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o ~/awscliv2.zip
@@ -96,18 +96,17 @@ jobs:
           java-version: 8
       - name: Fetching scripts
         run: |
-          scripts_directory=${{ steps.env.outputs.REMOTE_SCRIPT_DIRECTORY }}
-          mkdir -p $scripts_directory
+          mkdir -p $REMOTE_SCRIPT_DIRECTORY
 
           scripts=( helpers build deploy )
           for script in "${scripts[@]}"
           do
-            script_path=$scripts_directory/$script.sh
+            script_path=$REMOTE_SCRIPT_DIRECTORY/$script.sh
 
             curl -o $script_path https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/$script.sh
             chmod +x $script_path
           done
       - name: Building
-        run: sh ${{ steps.env.outputs.REMOTE_SCRIPT_DIRECTORY }}/build.sh
+        run: sh $REMOTE_SCRIPT_DIRECTORY/build.sh
       - name: Deploying
-        run: sh ${{ steps.env.outputs.REMOTE_SCRIPT_DIRECTORY }}/deploy.sh
+        run: sh $REMOTE_SCRIPT_DIRECTORY/deploy.sh

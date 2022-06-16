@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./.github/scripts/helpers.sh
+source $REMOTE_SCRIPT_DIRECTORY/helpers.sh
 
 s3_build_url=$S3_BUILD_DIRECTORY$TARGET_BUILD
 build_exists=$(s3_check_build $s3_build_url)
