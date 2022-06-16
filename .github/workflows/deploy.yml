@@ -50,10 +50,11 @@ jobs:
           ref: '${{ inputs.branch }}'
           token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Configuring ENV
+        id: env
         run: |
-          branch_normailized=${{ inputs.branch }}
-          branch_normailized=${branch_normailized#refs/heads/}
-          branch_normailized=${branch_normailized//[^[:alnum:]]/-}
+          branch_reference=${{ inputs.branch }}
+          branch=${branch_reference#refs/heads/}
+          branch_normailized=${branch//[^[:alnum:]]/-}
           s3_build_sub_directory=${{ inputs.application_name }}/$branch_normailized
           s3_build_directory=s3://${{ inputs.s3_bucket_name }}/$s3_build_sub_directory/
           target_build=ref-${{ inputs.commit_sha }}.${{ inputs.build_type }}
@@ -69,6 +70,9 @@ jobs:
           echo "S3_BUILD_DIRECTORY=$s3_build_directory" >> $GITHUB_ENV
           echo "TARGET_BUILD=$target_build" >> $GITHUB_ENV
           echo "VERSION_LABEL=$version_label" >> $GITHUB_ENV
+
+          echo '::set-output name=BRANCH::$branch'
+          echo '::set-output name=REMOTE_SCRIPT_DIRECTORY::./.github/remote_scripts'
       # - name: Installing required system-level dependencies
       #   run: |
       #     curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o ~/awscliv2.zip
@@ -85,22 +89,25 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ inputs.aws_region }}
       - name: Setting-up JDK
-        if: ${{ inputs.build_type == 'war' }}
+        if: inputs.build_type == 'war'
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 8
       - name: Fetching scripts
         run: |
-          scripts_directory=./.github/scripts
+          scripts_directory=${{ steps.env.outputs.REMOTE_SCRIPT_DIRECTORY }}
           mkdir -p $scripts_directory
-          curl -o $scripts_directory/helpers.sh https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/helpers.sh
-          chmod +x $scripts_directory/helpers.sh
-          curl -o $scripts_directory/build.sh https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/build.sh
-          chmod +x $scripts_directory/build.sh
-          curl -o $scripts_directory/deploy.sh https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/deploy.sh
-          chmod +x $scripts_directory/deploy.sh
+
+          scripts=( helpers build deploy )
+          for script in "${scripts[@]}"
+          do
+            script_path=$scripts_directory/$script.sh
+
+            curl -o $script_path https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/$script.sh
+            chmod +x $script_path
+          done
       - name: Building
-        run: ./.github/scripts/build.sh
+        run: sh ${{ steps.env.outputs.REMOTE_SCRIPT_DIRECTORY }}/build.sh
       - name: Deploying
-        run: ./.github/scripts/deploy.sh
+        run: sh ${{ steps.env.outputs.REMOTE_SCRIPT_DIRECTORY }}/deploy.sh
