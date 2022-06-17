@@ -6,7 +6,7 @@ build () {
   type=$1
   name=$2
 
-  mkdir build
+  mkdir -p $BUILD_DIRECTORY
 
   case $type in
     war)
@@ -22,13 +22,13 @@ __build_war () {
   name=$1
 
   mvn package -q -f pom.xml
-  mv $(ls ./target/*.war | head -1) ./build/$name
+  mv $(ls ./target/*.war | head -1) $BUILD_DIRECTORY/$name
 }
 
 __build_zip () {
   name=$1
 
-  zip ./build/$name -qr * .[^.]*
+  zip $BUILD_DIRECTORY/$name -qr * .[^.]*
 }
 
 # S3

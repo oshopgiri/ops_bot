@@ -64,6 +64,7 @@ jobs:
           echo "AWS_EBS_APPLICATION_NAME=${{ inputs.aws_ebs_application_name }}" >> $GITHUB_ENV
           echo "AWS_EBS_ENVIRONMENT_NAME=${{ inputs.aws_ebs_environment_name }}" >> $GITHUB_ENV
           echo "AWS_PAGER=''" >> $GITHUB_ENV
+          echo "BUILD_DIRECTORY=./build" >> $GITHUB_ENV
           echo "BUILD_TYPE=${{ inputs.build_type }}" >> $GITHUB_ENV
           echo "REMOTE_SCRIPT_DIRECTORY=./.github/remote_scripts" >> $GITHUB_ENV
           echo "S3_BUCKET_NAME=${{ inputs.s3_bucket_name }}" >> $GITHUB_ENV
@@ -71,8 +72,9 @@ jobs:
           echo "S3_BUILD_DIRECTORY=$s3_build_directory" >> $GITHUB_ENV
           echo "TARGET_BUILD=$target_build" >> $GITHUB_ENV
           echo "VERSION_LABEL=$version_label" >> $GITHUB_ENV
+      #   TODO: add support for project specific pre-build and pre-deploy scripts
+      #     echo '::set-output name=BRANCH::$branch'
 
-          echo '::set-output name=BRANCH::$branch'
       # - name: Installing required system-level dependencies
       #   run: |
       #     curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o ~/awscliv2.zip
