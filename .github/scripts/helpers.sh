@@ -31,6 +31,14 @@ __build_zip () {
   zip $BUILD_DIRECTORY/$name -qr * .[^.]*
 }
 
+# Local
+
+local_check_build () {
+  [ -f $BUILD_DIRECTORY/$TARGET_BUILD ] && exists=true || exists=false
+
+  echo $exists
+}
+
 # S3
 
 s3_check_build () {

@@ -1,4 +1,4 @@
-name: deploy
+name: deployer
 
 on:
   workflow_call:
@@ -34,8 +34,20 @@ on:
         required: true
         type: string
 
+env:
+  AWS_EBS_APPLICATION_NAME: ${{ inputs.aws_ebs_application_name }}
+  AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
+  AWS_PAGER: ''
+  BUILD_DIRECTORY: ./build
+  BUILD_TYPE: ${{ inputs.build_type }}
+  REMOTE_SCRIPT_DIRECTORY: ./deploy_actions/.github/scripts
+  S3_BUCKET_NAME: ${{ inputs.s3_bucket_name }}
+  TARGET_BUILD: ref-${{ inputs.commit_sha }}.${{ inputs.build_type }}
+  VERSION_LABEL: ver-${{ inputs.commit_sha }}
+
+
 jobs:
-  deploy:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - name: Logging run context
@@ -43,12 +55,39 @@ jobs:
           echo "user: ${{ inputs.github_actor }},
           deploying branch: ${{ inputs.branch }},
           to EBS environment: ${{ inputs.aws_ebs_application_name }} [${{ inputs.aws_ebs_environment_name }}]"
+      - name: Checking-out scripts
+        uses: actions/checkout@v3
+        with:
+          repository: cicona/deploy_actions
+          ref: master
+          path: deploy_actions
+      - name: Making scripts executable
+        run: |
+          scripts=( helpers build deploy )
+          for script in "${scripts[@]}"
+          do
+            chmod +x $REMOTE_SCRIPT_DIRECTORY/$script.sh
+          done
+      - name: Caching scripts
+        uses: actions/cache@v3
+        with:
+          path: deploy_actions
+          key: ${{ inputs.commit_sha }}
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
       - name: Checking-out current branch
         uses: actions/checkout@v3
         with:
           repository: '${{ inputs.github_repository }}'
           ref: '${{ inputs.branch }}'
           token: '${{ secrets.GITHUB_TOKEN }}'
+      - name: Reading scripts from cache
+        uses: actions/cache@v3
+        with:
+          path: deploy_actions
+          key: ${{ inputs.commit_sha }}
       - name: Configuring ENV
         id: env
         run: |
@@ -56,34 +95,13 @@ jobs:
           branch=${branch_reference#refs/heads/}
           branch_normailized=${branch//[^[:alnum:]]/-}
           s3_build_sub_directory=${{ inputs.application_name }}/$branch_normailized
-          s3_build_directory=s3://${{ inputs.s3_bucket_name }}/$s3_build_sub_directory/
-          target_build=ref-${{ inputs.commit_sha }}.${{ inputs.build_type }}
-          s3_build_key=$s3_build_sub_directory/$target_build
-          version_label=ver-${{ inputs.commit_sha }}
+          s3_build_directory=s3://$S3_BUCKET_NAME/$s3_build_sub_directory/
+          s3_build_key=$s3_build_sub_directory/$TARGET_BUILD
 
-          echo "AWS_EBS_APPLICATION_NAME=${{ inputs.aws_ebs_application_name }}" >> $GITHUB_ENV
-          echo "AWS_EBS_ENVIRONMENT_NAME=${{ inputs.aws_ebs_environment_name }}" >> $GITHUB_ENV
-          echo "AWS_PAGER=''" >> $GITHUB_ENV
-          echo "BUILD_DIRECTORY=./build" >> $GITHUB_ENV
-          echo "BUILD_TYPE=${{ inputs.build_type }}" >> $GITHUB_ENV
-          echo "REMOTE_SCRIPT_DIRECTORY=./.github/remote_scripts" >> $GITHUB_ENV
-          echo "S3_BUCKET_NAME=${{ inputs.s3_bucket_name }}" >> $GITHUB_ENV
-          echo "S3_BUILD_KEY=$s3_build_key" >> $GITHUB_ENV
           echo "S3_BUILD_DIRECTORY=$s3_build_directory" >> $GITHUB_ENV
-          echo "TARGET_BUILD=$target_build" >> $GITHUB_ENV
-          echo "VERSION_LABEL=$version_label" >> $GITHUB_ENV
+          echo "S3_BUILD_KEY=$s3_build_key" >> $GITHUB_ENV
       #   TODO: add support for project specific pre-build and pre-deploy scripts
       #     echo '::set-output name=BRANCH::$branch'
-
-      # - name: Installing required system-level dependencies
-      #   run: |
-      #     curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o ~/awscliv2.zip
-      #     unzip -q ~/awscliv2.zip -d ~/
-      #     sudo ~/aws/install
-      #     sudo apt-get -qq install software-properties-common
-      #     sudo apt-add-repository universe -y
-      #     sudo apt-get -qq update
-      #     sudo apt-get -qq install maven -y
       - name: Configuring AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -96,19 +114,39 @@ jobs:
         with:
           distribution: temurin
           java-version: 8
-      - name: Fetching scripts
-        run: |
-          mkdir -p $REMOTE_SCRIPT_DIRECTORY
-
-          scripts=( helpers build deploy )
-          for script in "${scripts[@]}"
-          do
-            script_path=$REMOTE_SCRIPT_DIRECTORY/$script.sh
-
-            curl -o $script_path https://raw.githubusercontent.com/cicona/deploy_actions/master/.github/scripts/$script.sh
-            chmod +x $script_path
-          done
       - name: Building
-        run: $REMOTE_SCRIPT_DIRECTORY/build.sh
-      - name: Deploying
-        run: $REMOTE_SCRIPT_DIRECTORY/deploy.sh
+        run: |
+          $REMOTE_SCRIPT_DIRECTORY/build.sh
+          if [ "$?" -ne "0" ]
+          then
+            exit 1
+          fi
+      - name: Publishing artifact
+        if: success()
+        with:
+          name: $VERSION_LABEL
+          path: $BUILD_DIRECTORY/$TARGET_BUILD
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reading scripts from cache
+        uses: actions/cache@v3
+        with:
+          path: deploy_actions
+          key: ${{ inputs.commit_sha }}
+      - name: Configuring AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws_region }}
+      - name: Triggering deploy
+        run: |
+          $REMOTE_SCRIPT_DIRECTORY/deploy.sh
+          if [ "$?" -ne "0" ]
+          then
+            exit 1
+          fi
+      # - name: Waiting for deploy to finish
+      # TODO: add check for deploy success/failure
