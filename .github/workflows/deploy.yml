@@ -89,7 +89,6 @@ jobs:
           path: deploy_actions
           key: ${{ inputs.commit_sha }}
       - name: Configuring ENV
-        id: env
         run: |
           branch_reference=${{ inputs.branch }}
           branch=${branch_reference#refs/heads/}
@@ -100,8 +99,6 @@ jobs:
 
           echo "S3_BUILD_DIRECTORY=$s3_build_directory" >> $GITHUB_ENV
           echo "S3_BUILD_KEY=$s3_build_key" >> $GITHUB_ENV
-      #   TODO: add support for project specific pre-build and pre-deploy scripts
-      #     echo '::set-output name=BRANCH::$branch'
       - name: Configuring AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -148,5 +145,3 @@ jobs:
           then
             exit 1
           fi
-      # - name: Waiting for deploy to finish
-      # TODO: add check for deploy success/failure
