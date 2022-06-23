@@ -120,6 +120,7 @@ jobs:
           fi
       - name: Publishing artifact
         if: success()
+        uses: actions/upload-artifact@v3
         with:
           name: $VERSION_LABEL
           path: $BUILD_DIRECTORY/$TARGET_BUILD
