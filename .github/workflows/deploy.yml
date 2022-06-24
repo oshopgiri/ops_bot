@@ -123,12 +123,12 @@ jobs:
           then
             exit 1
           fi
-      - name: Publishing artifact
-        if: success()
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.VERSION_LABEL }}
-          path: ${{ env.BUILD_DIRECTORY }}/${{ env.TARGET_BUILD }}
+      # - name: Publishing artifact
+      #   if: success()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ env.VERSION_LABEL }}
+      #     path: ${{ env.BUILD_DIRECTORY }}/${{ env.TARGET_BUILD }}
   deploy:
     needs: [setup, build]
     runs-on: ubuntu-latest
