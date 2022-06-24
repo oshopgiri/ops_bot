@@ -6,8 +6,6 @@ build () {
   type=$1
   name=$2
 
-  mkdir -p $BUILD_DIRECTORY
-
   case $type in
     war)
       __build_war $name
@@ -48,6 +46,13 @@ s3_check_build () {
   [ -z "$existing_build" ] && exists=false || exists=true
 
   echo $exists
+}
+
+s3_download_build() {
+  s3_url=$1
+  path=$2
+
+  aws s3 cp $s3_url $path --no-progress
 }
 
 s3_upload_build () {
