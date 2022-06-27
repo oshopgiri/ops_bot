@@ -21,7 +21,7 @@ on:
 
 env:
   CACHE_KEY: sgr-${{ inputs.security_group_id }}-${{ github.actor }}
-  CACHE_FILE: ./.$CACHE_KEY
+  CACHE_FILE: ./.sgr-${{ inputs.security_group_id }}-${{ github.actor }}
 
 jobs:
   whitelist_ip:
