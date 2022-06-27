@@ -59,7 +59,7 @@ jobs:
           security_group_rule_id=$( \
             aws ec2 authorize-security-group-ingress \
               --group-id ${{ inputs.security_group_id }} \
-              --ip-permissions IpProtocol=${{ inputs.protocol }},FromPort=${{ inputs.port }},ToPort=${{ inputs.port }},IpRanges=[{CidrIp=${{ inputs.ip_address }}/32,Description="github-${{ github.actor }}"}] \
+              --ip-permissions IpProtocol=${{ inputs.protocol }},FromPort=${{ inputs.port }},ToPort=${{ inputs.port }},IpRanges=\[\{CidrIp=${{ inputs.ip_address }}/32,Description="github-${{ github.actor }}"\}\] \
               | jq -r ".SecurityGroupRules[0].SecurityGroupRuleId" \
           )
           echo "::set-output name=SECURITY_GROUP_RULE_ID::$security_group_rule_id"
