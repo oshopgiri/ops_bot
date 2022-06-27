@@ -78,7 +78,8 @@ jobs:
           path: deploy_actions
       - name: Making scripts executable
         run: |
-          for script in $REMOTE_SCRIPT_DIRECTORY/*.sh; do
+          for script in $(find $REMOTE_SCRIPT_DIRECTORY -name '*.sh');
+          do
             chmod +x $script
           done
       - name: Caching scripts
