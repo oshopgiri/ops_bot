@@ -52,6 +52,7 @@ jobs:
             aws ec2 revoke-security-group-ingress \
               --group-id ${{ inputs.security_group_id }} \
               --security-group-rule-ids $security_group_rule_id \
+              | jq -r ".Return" \
           )
       - name: Whitelisting new IP
         id: add_ip
