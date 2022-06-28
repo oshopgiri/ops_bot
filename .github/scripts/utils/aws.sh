@@ -1,42 +1,5 @@
 #!/bin/bash
 
-# Build
-
-build () {
-  type=$1
-  name=$2
-
-  case $type in
-    war)
-      __build_war $name
-      ;;
-    zip)
-      __build_zip $name
-      ;;
-  esac
-}
-
-__build_war () {
-  name=$1
-
-  mvn package -q -f pom.xml
-  mv $(ls ./target/*.war | head -1) $BUILD_DIRECTORY/$name
-}
-
-__build_zip () {
-  name=$1
-
-  zip $BUILD_DIRECTORY/$name -qr * .[^.]*
-}
-
-# Local
-
-local_check_build () {
-  [ -f $BUILD_DIRECTORY/$TARGET_BUILD ] && exists=true || exists=false
-
-  echo $exists
-}
-
 # S3
 
 s3_check_build () {
@@ -98,4 +61,36 @@ ebs_deploy_application_version () {
   aws elasticbeanstalk update-environment \
     --environment-name $environment_name \
     --version-label "$version_label"
+}
+
+# EC2 Security Group
+ec2_sg_whitelist_ip () {
+  security_group_id=$1
+  protocol=$2
+  ip_address=$3
+  port=$4
+  description=$5
+
+  security_group_rule_id=$( \
+    aws ec2 authorize-security-group-ingress \
+      --group-id $security_group_id \
+      --ip-permissions IpProtocol=$protocol,FromPort=$port,ToPort=$port,IpRanges=\[\{CidrIp=$ip_address/32,Description=$description\}\] \
+    | jq -r ".SecurityGroupRules[0].SecurityGroupRuleId" \
+  )
+
+  echo $security_group_rule_id
+}
+
+ec2_sg_revoke_ip () {
+  security_group_id=$1
+  security_group_rule_id=$2
+
+  status=$( \
+    aws ec2 revoke-security-group-ingress \
+      --group-id $security_group_id \
+      --security-group-rule-ids $security_group_rule_id \
+    | jq -r ".Return" \
+  )
+
+  echo $status
 }

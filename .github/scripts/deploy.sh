@@ -1,5 +1,5 @@
 #!/bin/bash
-source $REMOTE_SCRIPT_DIRECTORY/helpers.sh
+source $REMOTE_SCRIPT_DIRECTORY/utils.sh
 
 version_exists=$(
   ebs_check_application_version \

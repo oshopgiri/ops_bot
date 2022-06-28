@@ -1,5 +1,5 @@
 #!/bin/bash
-source $REMOTE_SCRIPT_DIRECTORY/helpers.sh
+source $REMOTE_SCRIPT_DIRECTORY/utils.sh
 
 s3_build_url=$S3_BUILD_DIRECTORY$TARGET_BUILD
 
