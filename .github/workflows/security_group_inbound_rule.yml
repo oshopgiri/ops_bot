@@ -75,7 +75,7 @@ jobs:
             ec2_sg_whitelist_ip \
               ${{ inputs.security_group_id }} \
               ${{ inputs.protocol }} \
-              "${{ inputs.ip_address }}" \
+              ${{ inputs.ip_address }} \
               ${{ inputs.port }} \
               "github-${{ github.actor }}" \
           )

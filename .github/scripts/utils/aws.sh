@@ -71,10 +71,12 @@ ec2_sg_whitelist_ip () {
   port=$4
   description=$5
 
+  ip_range=[{CidrIp=$ip_address/32,Description=$description}]
+
   security_group_rule_id=$( \
     aws ec2 authorize-security-group-ingress \
       --group-id $security_group_id \
-      --ip-permissions IpProtocol=$protocol,FromPort=$port,ToPort=$port,IpRanges=\[\{CidrIp=$ip_address/32,Description=$description\}\] \
+      --ip-permissions IpProtocol=$protocol,FromPort=$port,ToPort=$port,IpRanges=$ip_range \
     | jq -r ".SecurityGroupRules[0].SecurityGroupRuleId" \
   )
 
