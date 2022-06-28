@@ -48,9 +48,11 @@ jobs:
         if: steps.cache.outputs.cache-hit == 'true'
         run: |
           security_group_rule_id=$(cat $CACHE_FILE)
-          aws ec2 revoke-security-group-ingress \
-            --group-id ${{ inputs.security_group_id }} \
-            --security-group-rule-ids $security_group_rule_id
+          response=$( \
+            aws ec2 revoke-security-group-ingress \
+              --group-id ${{ inputs.security_group_id }} \
+              --security-group-rule-ids $security_group_rule_id \
+          )
       - name: Whitelisting new IP
         id: add_ip
         run: |
