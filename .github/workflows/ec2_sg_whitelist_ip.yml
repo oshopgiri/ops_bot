@@ -1,4 +1,4 @@
-name: security_group_inbound_rule
+name: ec2_sg
 
 on:
   workflow_call:

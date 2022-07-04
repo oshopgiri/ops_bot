@@ -57,14 +57,14 @@ jobs:
         run: |
           echo "user: ${{ inputs.github_actor }},
           deploying branch: ${{ inputs.branch }},
-          to EBS environment: ${{ inputs.aws_ebs_application_name }} [${{ inputs.aws_ebs_environment_name }}]"
+          to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
       - name: Configuring ENV
         id: env
         run: |
           branch_reference=${{ inputs.branch }}
           branch=${branch_reference#refs/heads/}
           branch_normailized=${branch//[^[:alnum:]]/-}
-          s3_build_sub_directory=${{ inputs.application_name }}/$branch_normailized
+          s3_build_sub_directory=$AWS_EBS_APPLICATION_NAME/$branch_normailized
           s3_build_directory=s3://$S3_BUCKET_NAME/$s3_build_sub_directory/
           s3_build_key=$s3_build_sub_directory/$TARGET_BUILD
 
