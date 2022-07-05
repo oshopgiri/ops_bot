@@ -64,7 +64,7 @@ jobs:
           branch_reference=${{ inputs.branch }}
           branch=${branch_reference#refs/heads/}
           branch_normailized=${branch//[^[:alnum:]]/-}
-          s3_build_sub_directory=${{ inputs.application_name }}//$branch_normailized
+          s3_build_sub_directory=${{ inputs.application_name }}/$branch_normailized
           s3_build_directory=s3://$S3_BUCKET_NAME/$s3_build_sub_directory/
           s3_build_key=$s3_build_sub_directory/$TARGET_BUILD
 
