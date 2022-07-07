@@ -16,19 +16,23 @@ on:
         required: true
         type: string
       branch:
-        required: true
+        deprecationMessage: picking from github context
+        required: false
         type: string
       build_type:
         required: true
         type: string
       commit_sha:
-        required: true
+        deprecationMessage: picking from github context
+        required: false
         type: string
       github_actor:
-        required: true
+        deprecationMessage: picking from github context
+        required: false
         type: string
       github_repository:
-        required: true
+        deprecationMessage: picking from github context
+        required: false
         type: string
       s3_bucket_name:
         required: true
@@ -39,12 +43,12 @@ env:
   AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
   AWS_PAGER: ''
   BUILD_DIRECTORY: ./build
-  BUILD_SCRIPTS_CACHE_KEY: ${{ inputs.commit_sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+  BUILD_SCRIPTS_CACHE_KEY: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
   BUILD_TYPE: ${{ inputs.build_type }}
   REMOTE_SCRIPT_DIRECTORY: ./deploy_actions/.github/scripts
   S3_BUCKET_NAME: ${{ inputs.s3_bucket_name }}
-  TARGET_BUILD: ref-${{ inputs.commit_sha }}.${{ inputs.build_type }}
-  VERSION_LABEL: ver-${{ inputs.commit_sha }}
+  TARGET_BUILD: ref-${{ github.sha }}.${{ inputs.build_type }}
+  VERSION_LABEL: ver-${{ github.sha }}
 
 jobs:
   setup:
@@ -55,13 +59,13 @@ jobs:
     steps:
       - name: Logging run context
         run: |
-          echo "user: ${{ inputs.github_actor }},
-          deploying branch: ${{ inputs.branch }},
+          echo "user: ${{ github.actor }},
+          deploying branch: ${{ github.ref }},
           to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
       - name: Configuring ENV
         id: env
         run: |
-          branch_reference=${{ inputs.branch }}
+          branch_reference=${{ github.ref }}
           branch=${branch_reference#refs/heads/}
           branch_normailized=${branch//[^[:alnum:]]/-}
           s3_build_sub_directory=${{ inputs.application_name }}/$branch_normailized
@@ -109,9 +113,8 @@ jobs:
       - name: Checking-out current branch
         uses: actions/checkout@v3
         with:
-          repository: '${{ inputs.github_repository }}'
-          ref: '${{ inputs.branch }}'
-          token: '${{ secrets.GITHUB_TOKEN }}'
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
       - name: Reading scripts from cache
         uses: actions/cache@v3
         with:
