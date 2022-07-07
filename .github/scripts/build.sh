@@ -8,8 +8,8 @@ mkdir -p $BUILD_DIRECTORY
 build_exists=$(s3_check_build $s3_build_url)
 if $build_exists
 then
-  echo "Existing build found on S3: $s3_build_url, downloading..."
-  s3_download_build $s3_build_url $BUILD_DIRECTORY
+  echo "Existing build found on S3: $s3_build_url"
+  # s3_download_build $s3_build_url $BUILD_DIRECTORY
 else
   echo "Building..."
   build $BUILD_TYPE $TARGET_BUILD
