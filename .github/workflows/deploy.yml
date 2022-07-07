@@ -16,22 +16,18 @@ on:
         required: true
         type: string
       branch:
-        deprecationMessage: picking from github context
         required: false
         type: string
       build_type:
         required: true
         type: string
       commit_sha:
-        deprecationMessage: picking from github context
         required: false
         type: string
       github_actor:
-        deprecationMessage: picking from github context
         required: false
         type: string
       github_repository:
-        deprecationMessage: picking from github context
         required: false
         type: string
       s3_bucket_name:
