@@ -33,6 +33,11 @@ on:
       s3_bucket_name:
         required: true
         type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
 
 env:
   AWS_EBS_APPLICATION_NAME: ${{ inputs.aws_ebs_application_name }}

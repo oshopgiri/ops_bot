@@ -9,6 +9,11 @@ on:
       aws_region:
         required: true
         type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
 
 env:
   AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
