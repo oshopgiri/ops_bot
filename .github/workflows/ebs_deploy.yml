@@ -15,20 +15,8 @@ on:
       aws_region:
         required: true
         type: string
-      branch:
-        required: false
-        type: string
       build_type:
         required: true
-        type: string
-      commit_sha:
-        required: false
-        type: string
-      github_actor:
-        required: false
-        type: string
-      github_repository:
-        required: false
         type: string
       s3_bucket_name:
         required: true
