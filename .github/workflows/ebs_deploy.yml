@@ -70,7 +70,7 @@ jobs:
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:
-          repository: cicona/deploy_actions
+          repository: oshopgiri/deploy_actions
           ref: master
           path: deploy_actions
       - name: Making remote scripts executable
