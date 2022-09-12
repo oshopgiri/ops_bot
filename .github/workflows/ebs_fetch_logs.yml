@@ -47,7 +47,8 @@ jobs:
             aws elasticbeanstalk retrieve-environment-info \
               --environment-name $AWS_EBS_ENVIRONMENT_NAME \
               --info-type bundle \
-            | jq -r ".EnvironmentInfo[0].Message"
+              --output json \
+              --query 'EnvironmentInfo[0].Message'
           )
 
           curl $logs_url --output $LOG_FILE_PATH
