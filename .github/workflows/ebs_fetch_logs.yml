@@ -47,7 +47,7 @@ jobs:
             aws elasticbeanstalk retrieve-environment-info \
               --environment-name $AWS_EBS_ENVIRONMENT_NAME \
               --info-type bundle \
-              --output json \
+              --output text \
               --query 'EnvironmentInfo[0].Message'
           )
 
