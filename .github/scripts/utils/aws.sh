@@ -77,7 +77,8 @@ ec2_sg_whitelist_ip () {
     aws ec2 authorize-security-group-ingress \
       --group-id $security_group_id \
       --ip-permissions IpProtocol=$protocol,FromPort=$port,ToPort=$port,IpRanges=$ip_range \
-    | jq -r ".SecurityGroupRules[0].SecurityGroupRuleId" \
+      --output text \
+      --query 'SecurityGroupRules[0].SecurityGroupRuleId' \
   )
 
   echo $security_group_rule_id
@@ -91,7 +92,8 @@ ec2_sg_revoke_ip () {
     aws ec2 revoke-security-group-ingress \
       --group-id $security_group_id \
       --security-group-rule-ids $security_group_rule_id \
-    | jq -r ".Return" \
+      --output text \
+      --query 'Return' \
   )
 
   echo $status
