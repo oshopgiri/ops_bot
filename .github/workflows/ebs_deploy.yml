@@ -3,16 +3,13 @@ name: ebs
 on:
   workflow_call:
     inputs:
-      application_name:
-        required: true
-        type: string
       aws_ebs_application_name:
         required: true
         type: string
       aws_ebs_environment_name:
         required: true
         type: string
-      aws_region:
+      aws_s3_bucket_name:
         required: true
         type: string
       build_type:
@@ -21,144 +18,82 @@ on:
       deploy_environment:
         required: false
         type: string
-      s3_bucket_name:
-        required: true
-        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
+      AWS_REGION:
+        required: true
 
 env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_EBS_APPLICATION_NAME: ${{ inputs.aws_ebs_application_name }}
   AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
-  AWS_PAGER: ''
-  BUILD_DIRECTORY: ./build
-  BUILD_SCRIPTS_CACHE_KEY: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+  AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
+  BUILD_DIRECTORY: ./target
   BUILD_TYPE: ${{ inputs.build_type }}
-  HOOKS_DIRECTORY: ./.github/hooks
-  REMOTE_SCRIPT_DIRECTORY: ./deploy_actions/.github/scripts
-  S3_BUCKET_NAME: ${{ inputs.s3_bucket_name }}
-  TARGET_BUILD: ref-${{ github.sha }}.${{ inputs.build_type }}
-  VERSION_LABEL: ver-${{ github.sha }}
+  SOURCE_DIRECTORY: ./app
+  SOURCE_HOOKS_DIRECTORY: ./.github/hooks
 
 jobs:
-  setup:
+  deploy:
     runs-on: ubuntu-latest
-    outputs:
-      S3_BUILD_DIRECTORY: ${{ steps.env.outputs.S3_BUILD_DIRECTORY }}
-      S3_BUILD_KEY: ${{ steps.env.outputs.S3_BUILD_KEY }}
     steps:
       - name: Logging run context
         run: |
           echo "user: ${{ github.actor }},
           deploying branch: ${{ github.ref }},
           to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
-      - name: Configuring ENV
-        id: env
-        run: |
-          branch_reference=${{ github.ref }}
-          branch=${branch_reference#refs/heads/}
-          branch_normailized=${branch//[^[:alnum:]]/-}
-          s3_build_sub_directory=${{ inputs.application_name }}/$branch_normailized
-          s3_build_directory=s3://$S3_BUCKET_NAME/$s3_build_sub_directory/
-          s3_build_key=$s3_build_sub_directory/$TARGET_BUILD
-
-          echo "::set-output name=S3_BUILD_DIRECTORY::$s3_build_directory"
-          echo "::set-output name=S3_BUILD_KEY::$s3_build_key"
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:
           repository: oshopgiri/deploy_actions
           ref: master
-          path: deploy_actions
-      - name: Making remote scripts executable
-        run: |
-          for script in $(find $REMOTE_SCRIPT_DIRECTORY -name '*.sh');
-          do
-            chmod +x $script
-          done
-      - name: Caching remote scripts
-        uses: actions/cache@v3
+          path: ./
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: deploy_actions
-          key: ${{ env.BUILD_SCRIPTS_CACHE_KEY }}
-  build:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Configuring ENV
-        run: |
-          echo "S3_BUILD_DIRECTORY=${{ needs.setup.outputs.S3_BUILD_DIRECTORY }}" >> $GITHUB_ENV
-      - name: Configuring AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+          bundler-cache: true
+      - name: Checking-out current branch
+        uses: actions/checkout@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ inputs.aws_region }}
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          path: ${{ env.SOURCE_DIRECTORY }}
       - name: Setting-up JDK
         if: inputs.build_type == 'war'
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 8
-      - name: Checking-out current branch
-        uses: actions/checkout@v3
-        with:
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref }}
       - name: Making hooks executable
         run: |
-          for script in $(find $HOOKS_DIRECTORY -name '*.sh');
+          cd $SOURCE_DIRECTORY
+          for script in $(find $SOURCE_HOOKS_DIRECTORY -name '*.sh');
           do
             chmod +x $script
           done
       - name: Running pre-build hook
         run: |
-          script=$HOOKS_DIRECTORY/pre_build.sh
-          if test -f "$script"; then
-            $HOOKS_DIRECTORY/pre_build.sh ${{ inputs.deploy_environment }}
+          cd $SOURCE_DIRECTORY
+          if test -f "$SOURCE_HOOKS_DIRECTORY/pre_build.sh"; then
+            $SOURCE_HOOKS_DIRECTORY/pre_build.sh ${{ inputs.deploy_environment }}
           fi
-      - name: Reading remote scripts from cache
-        uses: actions/cache@v3
-        with:
-          path: deploy_actions
-          key: ${{ env.BUILD_SCRIPTS_CACHE_KEY }}
       - name: Building
         run: |
-          $REMOTE_SCRIPT_DIRECTORY/build.sh
+          mkdir -p $BUILD_DIRECTORY
+          ruby build.rb
           if [ "$?" -ne "0" ]
           then
             exit 1
           fi
-      # - name: Publishing artifact
-      #   if: success()
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ env.VERSION_LABEL }}
-      #     path: ${{ env.BUILD_DIRECTORY }}/${{ env.TARGET_BUILD }}
-  deploy:
-    needs: [setup, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Configuring ENV
-        run: |
-          echo "S3_BUILD_KEY=${{ needs.setup.outputs.S3_BUILD_KEY }}" >> $GITHUB_ENV
-      - name: Configuring AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ inputs.aws_region }}
-      - name: Reading remote scripts from cache
-        uses: actions/cache@v3
-        with:
-          path: deploy_actions
-          key: ${{ env.BUILD_SCRIPTS_CACHE_KEY }}
       - name: Triggering deploy
+        if: success()
         run: |
-          $REMOTE_SCRIPT_DIRECTORY/deploy.sh
+          ruby deploy.rb
           if [ "$?" -ne "0" ]
           then
             exit 1

@@ -3,9 +3,6 @@ name: ec2_sg
 on:
   workflow_call:
     inputs:
-      aws_region:
-        required: true
-        type: string
       ip_address:
         required: true
         type: string
@@ -15,18 +12,24 @@ on:
       protocol:
         required: true
         type: string
-      security_group_id:
-        required: true
-        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
+      AWS_REGION:
+        required: true
+      AWS_EC2_SECURITY_GROUP_ID:
+        required: true
 
 env:
-  CACHE_KEY: sgr-${{ inputs.security_group_id }}-${{ github.actor }}
-  CACHE_FILE: ./.sgr-${{ inputs.security_group_id }}-${{ github.actor }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_EC2_SECURITY_GROUP_ID: ${{ secrets.AWS_EC2_SECURITY_GROUP_ID }}
+  AWS_EC2_SGR_IP_ADDRESS: ${{ inputs.ip_address }}
+  AWS_EC2_SGR_PORT: ${{ inputs.port }}
+  AWS_EC2_SGR_PROTOCOL: ${{ inputs.protocol }}
 
 jobs:
   whitelist_ip:
@@ -37,40 +40,14 @@ jobs:
           echo "user: ${{ github.actor }},
           opening port: ${{ inputs.port }} over protocol: ${{ inputs.protocol }} for IP: ${{ inputs.ip_address }}
           in EC2 Security Group: ${{ inputs.security_group_id }}"
-      - name: Configuring AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ inputs.aws_region }}
-      - name: Enabling cache
-        id: cache
-        uses: actions/cache@v3
+          repository: oshopgiri/deploy_actions
+          ref: master
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: ${{ env.CACHE_FILE }}
-          key: ${{ env.CACHE_KEY }}
-      - name: Revoking existing IP
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: |
-          security_group_rule_id=$(cat $CACHE_FILE)
-          response=$( \
-            aws ec2 revoke-security-group-ingress \
-              --group-id ${{ inputs.security_group_id }} \
-              --security-group-rule-ids $security_group_rule_id \
-              --output text \
-              --query 'Return' \
-          )
+          bundler-cache: true
       - name: Whitelisting new IP
-        id: add_ip
-        run: |
-          security_group_rule_id=$( \
-            aws ec2 authorize-security-group-ingress \
-              --group-id ${{ inputs.security_group_id }} \
-              --ip-permissions IpProtocol=${{ inputs.protocol }},FromPort=${{ inputs.port }},ToPort=${{ inputs.port }},IpRanges=\[\{CidrIp=${{ inputs.ip_address }}/32,Description="github-${{ github.actor }}"\}\] \
-              --output text \
-              --query 'SecurityGroupRules[0].SecurityGroupRuleId' \
-          )
-          echo "::set-output name=SECURITY_GROUP_RULE_ID::$security_group_rule_id"
-      - name: Caching response
-        if: contains(steps.add_ip.outputs.SECURITY_GROUP_RULE_ID, 'sgr-')
-        run: echo ${{ steps.add_ip.outputs.SECURITY_GROUP_RULE_ID }} > $CACHE_FILE
+        run: ruby whitelist_ip.rb

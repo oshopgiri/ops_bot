@@ -6,16 +6,18 @@ on:
       aws_ebs_environment_name:
         required: true
         type: string
-      aws_region:
-        required: true
-        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
+      AWS_REGION:
+        required: true
 
 env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
   LOG_FILE_PATH: ./${{ inputs.aws_ebs_environment_name }}_logs.zip
 
@@ -27,32 +29,18 @@ jobs:
         run: |
           echo "user: ${{ github.actor }},
           fetching logs for EBS environment: $AWS_EBS_ENVIRONMENT_NAME"
-      - name: Configuring AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ inputs.aws_region }}
+          repository: oshopgiri/deploy_actions
+          ref: master
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
       - name: Fetching logs
-        run: |
-          echo "Requesting logs..."
-          aws elasticbeanstalk request-environment-info \
-            --environment-name $AWS_EBS_ENVIRONMENT_NAME \
-            --info-type bundle
-
-          sleep 15
-
-          echo "Downloading logs..."
-          logs_url=$( \
-            aws elasticbeanstalk retrieve-environment-info \
-              --environment-name $AWS_EBS_ENVIRONMENT_NAME \
-              --info-type bundle \
-              --output text \
-              --query 'EnvironmentInfo[0].Message'
-          )
-
-          curl $logs_url --output $LOG_FILE_PATH
-      - name: Publishing logs
+        run: ruby fetch_logs.rb
+      - name: Publishing logs as artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.AWS_EBS_ENVIRONMENT_NAME }}
