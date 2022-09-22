@@ -1,12 +1,9 @@
-name: ebs
+name: iam
 
 on:
   workflow_call:
     inputs:
-      aws_ebs_environment_name:
-        required: true
-        type: string
-      aws_ebs_instance_type:
+      serviced_repos:
         required: true
         type: string
     secrets:
@@ -16,31 +13,34 @@ on:
         required: true
       AWS_REGION:
         required: true
+      AWS_IAM_USER_NAME:
+        required: true
+      GH_ACCESS_TOKEN:
+        required: true
+      SLACK_BOT_TOKEN:
+        required: false
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
-  AWS_EBS_INSTANCE_TYPE: ${{ inputs.aws_ebs_instance_type }}
+  AWS_IAM_USER_NAME: ${{ secrets.AWS_IAM_USER_NAME }}
+  GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+  SERVICED_REPOS: ${{ inputs.serviced_repos }}
 
 jobs:
-  update_instance_type:
+  rotate_key:
     runs-on: ubuntu-latest
     steps:
-      - name: Logging run context
-        run: |
-          echo "user: ${{ github.actor }},
-          updating EBS environment: $AWS_EBS_ENVIRONMENT_NAME,
-          instance type to: $AWS_EBS_INSTANCE_TYPE"
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:
           repository: oshopgiri/deploy_actions
           ref: master
+          path: ./
       - name: Setting-up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Updating configuration - InstanceType
-        run: ruby update_insatnce_type.rb
+      - name: Rotating keys
+        run: ruby rotate_access_key.rb
