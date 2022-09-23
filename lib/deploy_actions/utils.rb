@@ -13,6 +13,10 @@ class DeployActions::Utils
 
   # AWS
 
+  def self.access_key_id
+    ENV['AWS_ACCESS_KEY_ID']
+  end
+
   def self.ebs_application_name
     ENV['AWS_EBS_APPLICATION_NAME']
   end

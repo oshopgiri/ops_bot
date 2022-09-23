@@ -1,12 +1,11 @@
 class DeployActions::AWS::IAM
   def initialize
+    @access_key_id = DeployActions::Utils.access_key_id
     @user_name = DeployActions::Utils.iam_user_name
     @serviced_repos = DeployActions::Utils.parsed_serviced_repos
   end
 
   def rotate_access_key
-    existing_access_key_ids
-
     @new_access_key = client.create_access_key({
         user_name: @user_name
     }).access_key
@@ -18,9 +17,7 @@ class DeployActions::AWS::IAM
       )
     end
 
-    existing_access_key_ids.each do |access_key_id|
-      delete_existing_access_key(access_key_id: access_key_id)
-    end
+    delete_access_key(access_key_id: existing_access_key_id)
   end
 
   private
@@ -36,7 +33,9 @@ class DeployActions::AWS::IAM
       )
     end
 
-    def delete_existing_access_key(access_key_id:)
+    def delete_access_key(access_key_id:)
+      return if access_key_id.blank?
+
       sleep(5.seconds)
 
       custom_client.update_access_key({
@@ -53,11 +52,13 @@ class DeployActions::AWS::IAM
       })
     end
 
-    def existing_access_key_ids
-      @existing_key_ids ||= client.list_access_keys({
+    def existing_access_key_id
+      @existing_access_key_id ||= client.list_access_keys({
         user_name: @user_name
       }).access_key_metadata
       .map(&:access_key_id)
+      .select { |access_key_id| access_key_id.eql? @access_key_id }
+      .first
     end
 
     def rotate_repo_access_keys(repo:, new_access_key:)
