@@ -36,7 +36,7 @@ class DeployActions::AWS::IAM
     def delete_access_key(access_key_id:)
       return if access_key_id.blank?
 
-      sleep(5.seconds)
+      sleep(10.seconds)
 
       custom_client.update_access_key({
         access_key_id: access_key_id,
@@ -44,7 +44,7 @@ class DeployActions::AWS::IAM
         user_name: @user_name
       })
 
-      sleep(5.seconds)
+      sleep(10.seconds)
 
       custom_client.delete_access_key({
         access_key_id: access_key_id,

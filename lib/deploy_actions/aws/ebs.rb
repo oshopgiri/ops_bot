@@ -79,6 +79,6 @@ class DeployActions::AWS::EBS
         info_type: 'bundle'
       })
 
-      sleep(15.seconds)
+      sleep(30.seconds)
     end
 end

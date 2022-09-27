@@ -38,7 +38,7 @@ class DeployActions::Utils
   end
 
   def self.ec2_security_group_rule_ip_address
-    ENV['AWS_EC2_SGR_IP_ADDRESS']
+    ENV['AWS_EC2_SGR_IP_ADDRESS'].to_s
   end
 
   def self.ec2_security_group_rule_port
