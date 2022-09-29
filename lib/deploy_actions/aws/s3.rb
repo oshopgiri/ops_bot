@@ -1,8 +1,8 @@
 class DeployActions::AWS::S3
   def initialize
-    @bucket = DeployActions::Utils.s3_bucket_name
-    @key = DeployActions::Utils.s3_build_key
-    @build_path = DeployActions::Utils.build_path
+    @bucket = DeployActions::ENV::AWS.s3_bucket_name
+    @key = DeployActions::ENV::AWS.s3_build_key
+    @build_path = DeployActions::ENV::Build.build_path
   end
 
   def build_exists?

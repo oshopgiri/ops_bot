@@ -1,8 +1,8 @@
 class DeployActions::AWS::IAM
   def initialize
-    @access_key_id = DeployActions::Utils.access_key_id
-    @user_name = DeployActions::Utils.iam_user_name
-    @serviced_repos = DeployActions::Utils.parsed_serviced_repos
+    @access_key_id = DeployActions::ENV::AWS.access_key_id
+    @user_name = DeployActions::ENV::AWS.iam_user_name
+    @serviced_repos = DeployActions::ENV::Base.parsed_serviced_repos
   end
 
   def rotate_access_key

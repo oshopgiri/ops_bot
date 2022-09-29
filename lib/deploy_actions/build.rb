@@ -1,9 +1,9 @@
 class DeployActions::Build
   def initialize
-    @type = DeployActions::Utils.build_type
-    @name = DeployActions::Utils.build_name
-    @build_path = DeployActions::Utils.build_path
-    @source_directory = DeployActions::Utils.source_directory
+    @type = DeployActions::ENV::Build.build_type
+    @name = DeployActions::ENV::Build.build_name
+    @build_path = DeployActions::ENV::Build.build_path
+    @source_directory = DeployActions::ENV::Build.source_directory
   end
 
   def build

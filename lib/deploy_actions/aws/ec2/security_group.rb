@@ -1,10 +1,10 @@
 class DeployActions::AWS::EC2::SecurityGroup
   def initialize
-    @description = DeployActions::Utils.ec2_security_group_rule_description
-    @ip_address = DeployActions::Utils.ec2_security_group_rule_ip_address
-    @port = DeployActions::Utils.ec2_security_group_rule_port
-    @protocol = DeployActions::Utils.ec2_security_group_rule_protocol
-    @security_group_id = DeployActions::Utils.ec2_security_group_id
+    @description = DeployActions::ENV::AWS.ec2_security_group_rule_description
+    @ip_address = DeployActions::ENV::AWS.ec2_security_group_rule_ip_address
+    @port = DeployActions::ENV::AWS.ec2_security_group_rule_port
+    @protocol = DeployActions::ENV::AWS.ec2_security_group_rule_protocol
+    @security_group_id = DeployActions::ENV::AWS.ec2_security_group_id
   end
 
   def revoke_old_ips

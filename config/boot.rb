@@ -15,6 +15,7 @@ loader.push_dir('lib')
 loader.inflector.inflect("aws" => "AWS")
 loader.inflector.inflect("ebs" => "EBS")
 loader.inflector.inflect("ec2" => "EC2")
+loader.inflector.inflect("env" => "ENV")
 loader.inflector.inflect("iam" => "IAM")
 loader.inflector.inflect("s3" => "S3")
 loader.setup

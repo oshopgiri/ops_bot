@@ -1,7 +1,7 @@
 require_relative './config/boot.rb'
 
 ebs_client = DeployActions::AWS::EBS.new
-ebs_version_label = DeployActions::Utils.build_version
+ebs_version_label = DeployActions::ENV::Build.build_version
 
 if ebs_client.version_exists?
   puts "Existing application version found on EBS: #{ebs_version_label}, skipping version creation..."

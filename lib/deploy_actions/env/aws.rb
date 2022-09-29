@@ -1,18 +1,4 @@
-class DeployActions::Utils
-  def self.normalized_branch_name
-    ENV['GITHUB_REF_NAME'].titleize.parameterize
-  end
-
-  def self.normalized_application_name
-    ebs_application_name&.parameterize
-  end
-
-  def self.parsed_serviced_repos
-    ENV['SERVICED_REPOS'].split(';').map(&:strip)
-  end
-
-  # AWS
-
+class DeployActions::ENV::AWS
   def self.access_key_id
     ENV['AWS_ACCESS_KEY_ID']
   end
@@ -58,40 +44,6 @@ class DeployActions::Utils
   end
 
   def self.s3_build_key
-    "#{normalized_application_name}/#{normalized_branch_name}/#{build_name}"
-  end
-
-  # Build
-
-  def self.build_name
-    "ref-#{ENV['GITHUB_SHA']}.#{build_type}"
-  end
-
-  def self.build_directory
-    ENV['BUILD_DIRECTORY']
-  end
-
-  def self.build_path
-    "#{build_directory}/#{build_name}"
-  end
-
-  def self.build_type
-    ENV['BUILD_TYPE']
-  end
-
-  def self.build_version
-    "ver-#{ENV['GITHUB_SHA']}"
-  end
-
-  # Log
-
-  def self.log_file_path
-    ENV['LOG_FILE_PATH']
-  end
-
-  # Source
-
-  def self.source_directory
-    ENV['SOURCE_DIRECTORY']
+    "#{DeployActions::ENV::Base.normalized_application_name}/#{DeployActions::ENV::Base.normalized_branch_name}/#{DeployActions::ENV::Build.build_name}"
   end
 end

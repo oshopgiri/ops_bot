@@ -1,12 +1,12 @@
 class DeployActions::AWS::EBS
   def initialize
-    @application_name = DeployActions::Utils.ebs_application_name
-    @environment_name = DeployActions::Utils.ebs_environment_name
-    @instance_type = DeployActions::Utils.ebs_instance_type
-    @log_file_path = DeployActions::Utils.log_file_path
-    @s3_bucket = DeployActions::Utils.s3_bucket_name
-    @s3_key = DeployActions::Utils.s3_build_key
-    @version_label = DeployActions::Utils.build_version
+    @application_name = DeployActions::ENV::AWS.ebs_application_name
+    @environment_name = DeployActions::ENV::AWS.ebs_environment_name
+    @instance_type = DeployActions::ENV::AWS.ebs_instance_type
+    @log_file_path = DeployActions::ENV::Base.log_file_path
+    @s3_bucket = DeployActions::ENV::AWS.s3_bucket_name
+    @s3_key = DeployActions::ENV::AWS.s3_build_key
+    @version_label = DeployActions::ENV::Build.build_version
   end
 
   def create_version
