@@ -53,6 +53,10 @@ class DeployActions::Utils
     ENV['AWS_IAM_USER_NAME']
   end
 
+  def self.lambda_function_name
+    # TODO: ENV['AWS_LAMBDA_FUNCTION_NAME']
+  end
+
   def self.s3_bucket_name
     ENV['AWS_S3_BUCKET_NAME']
   end

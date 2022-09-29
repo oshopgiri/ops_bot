@@ -1,0 +1,76 @@
+name: ebs
+
+on:
+  workflow_call:
+    inputs:
+      aws_lambda_function_name:
+        required: true
+        type: string
+      aws_s3_bucket_name:
+        required: true
+        type: string
+      build_type:
+        required: true
+        type: string
+      deploy_environment:
+        required: false
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_LAMBDA_FUNCTION_NAME: ${{ inputs.aws_lambda_function_name }}
+  AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
+  BUILD_DIRECTORY: ./target
+  BUILD_TYPE: ${{ inputs.build_type }}
+  SOURCE_DIRECTORY: ./app
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Logging run context
+        run: |
+          echo "user: ${{ github.actor }},
+          deploying branch: ${{ github.ref }},
+          to Lambda function: $AWS_LAMBDA_FUNCTION_NAME"
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/deploy_actions
+          ref: master
+          path: ./
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Checking-out current branch
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          path: ${{ env.SOURCE_DIRECTORY }}
+      - name: Building
+        run: |
+          mkdir -p $BUILD_DIRECTORY
+          ruby build.rb
+          if [ "$?" -ne "0" ]
+          then
+            exit 1
+          fi
+      - name: Triggering deploy
+        if: success()
+        run: |
+          ruby lambda_deploy.rb
+          if [ "$?" -ne "0" ]
+          then
+            exit 1
+          fi
