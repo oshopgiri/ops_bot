@@ -38,8 +38,7 @@ jobs:
       - name: Logging run context
         run: |
           echo "user: ${{ github.actor }},
-          opening port: ${{ inputs.port }} over protocol: ${{ inputs.protocol }} for IP: ${{ inputs.ip_address }}
-          in EC2 Security Group: ${{ inputs.security_group_id }}"
+          opening port: $AWS_EC2_SGR_PORT over protocol: $AWS_EC2_SGR_PROTOCOL for IP: $AWS_EC2_SGR_IP_ADDRESS"
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:
