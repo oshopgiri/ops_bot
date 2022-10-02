@@ -8,6 +8,7 @@ gem 'aws-sdk-elasticbeanstalk'
 gem 'aws-sdk-iam'
 gem 'aws-sdk-s3'
 gem 'nokogiri'
+gem 'slack-ruby-client'
 gem 'zeitwerk'
 
 group :development do

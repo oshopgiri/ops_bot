@@ -61,6 +61,22 @@ class DeployActions::Utils
     "#{normalized_application_name}/#{normalized_branch_name}/#{build_name}"
   end
 
+  # GitHub
+
+  def self.action_run_name
+    "#{ENV['GITHUB_ACTION']}##{ENV['GITHUB_RUN_NUMBER']}"
+  end
+
+  def self.action_run_url
+    "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
+  end
+
+  # Slack
+
+  def self.slack_channel_ids
+    ENV['SLACK_CHANNEL_IDS']
+  end
+
   # Build
 
   def self.build_name

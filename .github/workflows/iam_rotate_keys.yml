@@ -6,6 +6,9 @@ on:
       serviced_repos:
         required: true
         type: string
+      slack_channel_ids:
+        required: false
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -27,6 +30,8 @@ env:
   AWS_IAM_USER_NAME: ${{ secrets.AWS_IAM_USER_NAME }}
   GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
   SERVICED_REPOS: ${{ inputs.serviced_repos }}
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
 
 jobs:
   rotate_key:
@@ -43,4 +48,4 @@ jobs:
         with:
           bundler-cache: true
       - name: Rotating keys
-        run: ruby rotate_access_key.rb
+        run: ruby rotate_github_action_access_key.rb
