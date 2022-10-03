@@ -1,28 +1,35 @@
 require_relative './config/boot.rb'
 
 iam_client = DeployActions::AWS::IAM.new
+serviced_repos = DeployActions::Utils.parsed_serviced_repos
 slack_client = DeployActions::Slack.new
 
-status = begin
+new_access_key = begin
 	iam_client.rotate_access_key
-	true
 rescue
-	false
+	nil
 end
+
+if new_access_key.present?
+	serviced_repos.each do |repo|
+		github_client = DeployActions::GitHub.new(repo: repo)
+		github_client.set_action_secret(
+			name: 'AWS_ACCESS_KEY_ID',
+			value: new_access_key.access_key_id
+		)
+		github_client.set_action_secret(
+			name: 'AWS_SECRET_ACCESS_KEY',
+			value: new_access_key.secret_access_key
+		)
+	end
+end
+
 slack_client.notify(payload: [
-	{
-		'type': 'header',
-		'text': {
-			'type': 'plain_text',
-			'text': 'IAM_:key::robot_face:',
-			'emoji': true
-		}
-	},
 	{
 		'type': 'section',
 		'text': {
 			'type': 'mrkdwn',
-			'text': '*AWS IAM :left_right_arrow: GitHub Actions*: Key rotation'
+			'text': 'Key rotation: *AWS IAM ~<>~ GitHub Actions*'
 		}
 	},
 	{
@@ -30,11 +37,11 @@ slack_client.notify(payload: [
 		'fields': [
 			{
 				'type': 'mrkdwn',
-				'text': "*Status:* #{status ? ':heavy_check_mark:' : ':x:'}"
+				'text': "*Logs:* <#{DeployActions::Utils.action_run_url}|#{DeployActions::Utils.action_run_name}>"
 			},
 			{
 				'type': 'mrkdwn',
-				'text': "*Logs:* <#{DeployActions::Utils.action_run_url}|#{DeployActions::Utils.action_run_name}>"
+				'text': "*Status:* #{new_access_key.present? ? ':large_green_circle:' : ':red_circle:'}"
 			}
 		]
 	}

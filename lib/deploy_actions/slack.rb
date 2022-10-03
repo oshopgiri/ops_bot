@@ -7,7 +7,7 @@ class DeployActions::Slack
   def notify(payload:)
     return if @channel_ids.blank?
 
-    client.postMessage(
+    client.chat_postMessage(
       channel: @channel_ids,
       blocks: payload
     )

@@ -10,14 +10,9 @@ class DeployActions::AWS::IAM
         user_name: @user_name
     }).access_key
 
-    @serviced_repos.each do |repo|
-      rotate_repo_access_keys(
-        repo: repo,
-        new_access_key: @new_access_key
-      )
-    end
+    delete_existing_access_key
 
-    delete_access_key(access_key_id: existing_access_key_id)
+    @new_access_key
   end
 
   private
@@ -33,13 +28,13 @@ class DeployActions::AWS::IAM
       )
     end
 
-    def delete_access_key(access_key_id:)
-      return if access_key_id.blank?
+    def delete_existing_access_key
+      return if existing_access_key_id.blank?
 
       sleep(10.seconds)
 
       custom_client.update_access_key({
-        access_key_id: access_key_id,
+        access_key_id: existing_access_key_id,
         status: 'Inactive',
         user_name: @user_name
       })
@@ -47,7 +42,7 @@ class DeployActions::AWS::IAM
       sleep(10.seconds)
 
       custom_client.delete_access_key({
-        access_key_id: access_key_id,
+        access_key_id: existing_access_key_id,
         user_name: @user_name
       })
     end
@@ -59,10 +54,5 @@ class DeployActions::AWS::IAM
       .map(&:access_key_id)
       .select { |access_key_id| access_key_id.eql? @access_key_id }
       .first
-    end
-
-    def rotate_repo_access_keys(repo:, new_access_key:)
-      system("gh secret set AWS_ACCESS_KEY_ID -a actions -b #{new_access_key.access_key_id} -R #{repo}")
-      system("gh secret set AWS_SECRET_ACCESS_KEY -a actions -b #{new_access_key.secret_access_key} -R #{repo}")
     end
 end
