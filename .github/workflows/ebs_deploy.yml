@@ -71,17 +71,17 @@ jobs:
           java-version: 8
       - name: Making hooks executable
         run: |
-          cd $SOURCE_DIRECTORY
           for script in $(find $SOURCE_HOOKS_DIRECTORY -name '*.sh');
           do
             chmod +x $script
           done
+        working-directory: ${{ env.SOURCE_DIRECTORY }}
       - name: Running pre-build hook
         run: |
-          cd $SOURCE_DIRECTORY
           if test -f "$SOURCE_HOOKS_DIRECTORY/pre_build.sh"; then
             $SOURCE_HOOKS_DIRECTORY/pre_build.sh ${{ inputs.deploy_environment }}
           fi
+        working-directory: ${{ env.SOURCE_DIRECTORY }}
       - name: Building
         run: |
           mkdir -p $BUILD_DIRECTORY
