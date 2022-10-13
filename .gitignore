@@ -1,6 +1,13 @@
+# ENV and Secrets
 **/.secrets
 **/.env
+
+# Package managers
 .bundle/**
 
+# Predefined directories
 app/**
 target/**
+
+# IDE
+.fleet/**
