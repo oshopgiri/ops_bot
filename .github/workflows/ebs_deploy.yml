@@ -93,7 +93,7 @@ jobs:
       - name: Triggering deploy
         if: success()
         run: |
-          ruby deploy.rb
+          ruby ebs_deploy.rb
           if [ "$?" -ne "0" ]
           then
             exit 1
