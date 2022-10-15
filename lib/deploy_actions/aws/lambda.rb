@@ -15,14 +15,12 @@ class DeployActions::AWS::Lambda
   end
 
   def invoke(payload:)
-    response = client.invoke({
+    client.invoke({
       function_name: @function_name,
       invocation_type: 'RequestResponse',
       log_type: 'Tail',
       payload: payload
     })
-
-    return response.status_code.eal?(200), response.payload
   end
 
   private
