@@ -37,7 +37,7 @@ slack_client.notify(payload: [
 		'fields': [
 			{
 				'type': 'mrkdwn',
-				'text': "*Logs:* <#{DeployActions::Utils.action_run_url}|#{DeployActions::Utils.action_run_name}>"
+				'text': "*<#{DeployActions::Utils.action_run_url}|Logs>*"
 			},
 			{
 				'type': 'mrkdwn',

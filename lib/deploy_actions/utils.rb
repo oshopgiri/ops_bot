@@ -63,10 +63,6 @@ class DeployActions::Utils
 
   # GitHub
 
-  def self.action_run_name
-    "#{ENV['GITHUB_ACTION']}##{ENV['GITHUB_RUN_NUMBER']}"
-  end
-
   def self.action_run_url
     "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
   end
