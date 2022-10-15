@@ -54,7 +54,7 @@ class DeployActions::Utils
   end
 
   def self.lambda_function_name
-    # TODO: ENV['AWS_LAMBDA_FUNCTION_NAME']
+    ENV['AWS_LAMBDA_FUNCTION_NAME']
   end
 
   def self.s3_bucket_name
