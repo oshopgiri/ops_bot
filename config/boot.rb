@@ -15,6 +15,11 @@ loader.push_dir('lib')
 loader.inflector.inflect("aws" => "AWS")
 loader.inflector.inflect("ebs" => "EBS")
 loader.inflector.inflect("ec2" => "EC2")
+loader.inflector.inflect("github" => "GitHub")
 loader.inflector.inflect("iam" => "IAM")
 loader.inflector.inflect("s3" => "S3")
 loader.setup
+
+Slack.configure do |config|
+  config.token = ENV['SLACK_BOT_TOKEN']
+end
