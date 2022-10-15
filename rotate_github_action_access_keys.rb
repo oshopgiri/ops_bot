@@ -29,7 +29,7 @@ slack_client.notify(payload: [
 		'type': 'section',
 		'text': {
 			'type': 'mrkdwn',
-			'text': "#{new_access_key.present? ? '<!here|here> ' : ''}Key rotation: *AWS IAM ~<>~ GitHub Actions*"
+			'text': "#{new_access_key.present? ? '' : '<!here|here> '}Key rotation: *AWS IAM ~<>~ GitHub Actions*"
 		}
 	},
 	{

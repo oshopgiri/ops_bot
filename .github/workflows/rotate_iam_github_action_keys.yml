@@ -1,4 +1,4 @@
-name: iam
+name: iam_github_action
 
 on:
   workflow_call:
@@ -34,7 +34,7 @@ env:
   SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
 
 jobs:
-  rotate_key:
+  rotate_keys:
     runs-on: ubuntu-latest
     steps:
       - name: Checking-out remote scripts
