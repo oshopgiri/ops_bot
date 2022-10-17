@@ -1,6 +1,6 @@
 class DeployActions::Utils
   def self.normalized_branch_name
-    ENV['GITHUB_REF_NAME'].titleize.parameterize
+    branch_name.titleize.parameterize
   end
 
   def self.normalized_application_name
@@ -9,6 +9,40 @@ class DeployActions::Utils
 
   def self.parsed_serviced_repos
     ENV['SERVICED_REPOS'].split(';').map(&:strip)
+  end
+
+  # GitHub
+
+  def self.action_run_url
+    "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
+  end
+
+  def self.actor
+    ENV['GITHUB_ACTOR']
+  end
+
+  def self.actor_url
+    "https://github.com/#{actor}"
+  end
+
+  def self.branch_name
+    ENV['GITHUB_REF_NAME']
+  end
+
+  def self.branch_url
+    "https://github.com/#{repository_name}/tree/#{branch_name}"
+  end
+
+  def self.commit_reference
+    ENV['GITHUB_SHA']
+  end
+
+  def self.commit_url
+    "https://github.com/#{repository_name}/commit/#{commit_reference}"
+  end
+
+  def self.repository_name
+    ENV['GITHUB_REPOSITORY']
   end
 
   # AWS
@@ -34,7 +68,7 @@ class DeployActions::Utils
   end
 
   def self.ec2_security_group_rule_description
-    "github-#{ENV['GITHUB_ACTOR']}"
+    "github-#{actor}"
   end
 
   def self.ec2_security_group_rule_ip_address
@@ -61,12 +95,6 @@ class DeployActions::Utils
     "#{normalized_application_name}/#{normalized_branch_name}/#{build_name}"
   end
 
-  # GitHub
-
-  def self.action_run_url
-    "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
-  end
-
   # Slack
 
   def self.slack_channel_ids
@@ -76,7 +104,7 @@ class DeployActions::Utils
   # Build
 
   def self.build_name
-    "ref-#{ENV['GITHUB_SHA']}.#{build_type}"
+    "ref-#{commit_reference}.#{build_type}"
   end
 
   def self.build_directory
@@ -92,7 +120,7 @@ class DeployActions::Utils
   end
 
   def self.build_version
-    "ver-#{ENV['GITHUB_SHA']}"
+    "ver-#{commit_reference}"
   end
 
   # Log
@@ -105,5 +133,11 @@ class DeployActions::Utils
 
   def self.source_directory
     ENV['SOURCE_DIRECTORY']
+  end
+
+  # Deploy
+
+  def self.is_production_deploy?
+    ENV['DEPLOY_ENVIRONMENT'].casecmp? 'production'
   end
 end

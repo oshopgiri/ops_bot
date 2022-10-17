@@ -35,6 +35,7 @@ env:
   AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
   BUILD_DIRECTORY: ./target
   BUILD_TYPE: ${{ inputs.build_type }}
+  DEPLOY_ENVIRONMENT: ${{ inputs.deploy_environment }}
   SOURCE_DIRECTORY: ./app
   SOURCE_HOOKS_DIRECTORY: ./.github/hooks
 
@@ -64,7 +65,7 @@ jobs:
           ref: ${{ github.ref }}
           path: ${{ env.SOURCE_DIRECTORY }}
       - name: Setting-up JDK
-        if: inputs.build_type == 'war'
+        if: env.BUILD_TYPE == 'war'
         uses: actions/setup-java@v3
         with:
           distribution: temurin
@@ -79,7 +80,7 @@ jobs:
       - name: Running pre-build hook
         run: |
           if test -f "$SOURCE_HOOKS_DIRECTORY/pre_build.sh"; then
-            $SOURCE_HOOKS_DIRECTORY/pre_build.sh ${{ inputs.deploy_environment }}
+            $SOURCE_HOOKS_DIRECTORY/pre_build.sh $DEPLOY_ENVIRONMENT
           fi
         working-directory: ${{ env.SOURCE_DIRECTORY }}
       - name: Building
