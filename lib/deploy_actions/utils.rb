@@ -59,13 +59,15 @@ class DeployActions::Utils
     ENV['AWS_EBS_APPLICATION_NAME']
   end
 
+  def self.ebs_application_url
+    "https://#{aws_region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{aws_region}#/application/overview?applicationName=#{ebs_application_name}"
+  end
+
   def self.ebs_environment_name
     ENV['AWS_EBS_ENVIRONMENT_NAME']
   end
 
   def self.ebs_environment_url
-    url = "https://#{aws_region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{aws_region}#/"
-
     environment_details = begin
       ebs_client = DeployActions::AWS::EBS.new
       ebs_client.describe_environment
@@ -73,11 +75,9 @@ class DeployActions::Utils
       nil
     end
 
-    url += environment_details.present? ?
-      "environment/dashboard?applicationName=#{ebs_application_name}&environmentId=#{environment_details.environment_id}" :
-      "application/overview?applicationName=#{ebs_application_name}"
-
-    url
+    environment_details.present? ?
+      "https://#{aws_region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{aws_region}#/environment/dashboard?applicationName=#{ebs_application_name}&environmentId=#{environment_details.environment_id}" :
+      ebs_application_url
   end
 
   def self.ebs_instance_type
