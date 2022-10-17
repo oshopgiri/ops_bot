@@ -18,7 +18,7 @@ else
 end
 
 puts 'Deploying...'
-response = ebs_client.deploy_version
+ebs_client.deploy_version
 
 if DeployActions::Utils.is_production_deploy?
   payload = [

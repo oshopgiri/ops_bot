@@ -47,6 +47,10 @@ class DeployActions::Utils
 
   # AWS
 
+  def self.aws_region
+    ENV['AWS_REGION']
+  end
+
   def self.access_key_id
     ENV['AWS_ACCESS_KEY_ID']
   end
@@ -57,6 +61,23 @@ class DeployActions::Utils
 
   def self.ebs_environment_name
     ENV['AWS_EBS_ENVIRONMENT_NAME']
+  end
+
+  def self.ebs_environment_url
+    url = "https://#{aws_region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{aws_region}#/"
+
+    environment_details = begin
+      ebs_client = DeployActions::AWS::EBS.new
+      ebs_client.describe_environment
+    rescue
+      nil
+    end
+
+    url += environment_details.present? ?
+      "environment/dashboard?applicationName=#{ebs_application_name}&environmentId=#{environment_details.environment_id}" :
+      "application/overview?applicationName=#{ebs_application_name}"
+
+    url
   end
 
   def self.ebs_instance_type
