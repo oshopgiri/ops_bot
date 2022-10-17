@@ -24,35 +24,8 @@ if new_access_key.present?
   end
 end
 
-payload = [
-  {
-    'type': 'header',
-    'text': {
-      'type': 'plain_text',
-      'text': 'Key rotation',
-      'emoji': true
-    }
-  }, {
-    'type': 'divider'
-  }, {
-    'type': 'section',
-    'text': {
-      'type': 'plain_text',
-      'text': 'AWS IAM :infinity: GitHub Actions',
-      'emoji': true
-    },
-    'accessory': {
-      'type': 'button',
-      'text': {
-        'type': 'plain_text',
-        'text': 'Logs',
-        'emoji': true
-      },
-      'style': new_access_key.present? ? 'primary' : 'danger',
-      'url': DeployActions::Utils.action_run_url
-    }
-  }
-]
+payload = Tilt.new('templates/notification/slack/rotate_iam_github_action_keys.json.erb')
+  .render(Object.new, new_access_key: new_access_keys)
 
 payload << {
   'type': 'section',

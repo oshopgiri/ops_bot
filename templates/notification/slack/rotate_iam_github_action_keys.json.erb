@@ -1,0 +1,29 @@
+[
+  {
+    "type": "header",
+    "text": {
+      "type": "plain_text",
+      "text": "Key rotation",
+      "emoji": true
+    }
+  }, {
+    "type": "divider"
+  }, {
+    "type": "section",
+    "text": {
+      "type": "plain_text",
+      "text": "AWS IAM :infinity: GitHub Actions",
+      "emoji": true
+    },
+    "accessory": {
+      "type": "button",
+      "text": {
+        "type": "plain_text",
+        "text": "Logs",
+        "emoji": true
+      },
+      "style": "<%= new_access_key.present? ? "primary" : "danger" %>",
+      "url": "<%= DeployActions::Utils.action_run_url %>"
+    }
+  }
+]
