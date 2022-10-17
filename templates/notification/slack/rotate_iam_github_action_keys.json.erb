@@ -26,4 +26,13 @@
       "url": "<%= DeployActions::Utils.action_run_url %>"
     }
   }
+  <% if new_access_key.blank? %>
+   , {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "\<!here|here\>"
+      }
+    }
+  <% end %>
 ]

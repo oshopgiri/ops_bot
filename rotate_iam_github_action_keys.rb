@@ -27,14 +27,6 @@ end
 payload = Tilt.new('templates/notification/slack/rotate_iam_github_action_keys.json.erb')
   .render(Object.new, new_access_key: new_access_keys)
 
-payload << {
-  'type': 'section',
-  'text': {
-    'type': 'mrkdwn',
-    'text': '<!here|here>'
-  }
-} if new_access_key.blank?
-
 slack_client.notify(payload: payload)
 
 exit(0)
