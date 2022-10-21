@@ -1,4 +1,4 @@
-require_relative './config/boot.rb'
+require_relative '../config/boot.rb'
 
 iam_client = DeployActions::AWS::IAM.new
 
