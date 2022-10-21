@@ -18,6 +18,9 @@ on:
       deploy_environment:
         required: false
         type: string
+      slack_channel_ids:
+        required: false
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -37,6 +40,7 @@ env:
   BUILD_TYPE: ${{ inputs.build_type }}
   DEPLOY_ENVIRONMENT: ${{ inputs.deploy_environment }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
   SOURCE_DIRECTORY: ./app
   SOURCE_HOOKS_DIRECTORY: ./.github/hooks
 
