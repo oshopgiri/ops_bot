@@ -11,9 +11,8 @@
   }, {
     "type": "section",
     "text": {
-      "type": "plain_text",
-      "text": "AWS IAM :infinity: GitHub Actions",
-      "emoji": true
+      "type": "mrkdwn",
+      "text": "AWS IAM :infinity: GitHub Actions <%= new_access_key.present? ? "" : "\<!channel|channel\>" %>"
     },
     "accessory": {
       "type": "button",
@@ -26,13 +25,4 @@
       "url": "<%= DeployActions::Utils.action_run_url %>"
     }
   }
-  <% if new_access_key.blank? %>
-   , {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "\<!here|here\>"
-      }
-    }
-  <% end %>
 ]

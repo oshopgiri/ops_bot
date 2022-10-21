@@ -158,7 +158,11 @@ class DeployActions::Utils
 
   # Deploy
 
+  def self.deploy_environment
+    ENV['DEPLOY_ENVIRONMENT'].to_s.underscore
+  end
+
   def self.is_production_deploy?
-    ENV['DEPLOY_ENVIRONMENT'].casecmp? 'production'
+    deploy_environment.casecmp? 'production'
   end
 end

@@ -21,10 +21,8 @@ puts 'Deploying...'
 ebs_client.deploy_version
 
 if DeployActions::Utils.is_production_deploy?
-  payload = Tilt.new('templates/notification/slack/ebs_deploy.json.erb').render
-
   slack_client = DeployActions::Slack.new
-  slack_client.notify(payload: payload)
+  slack_client.notify(view_file: 'ebs_deploy.json.erb')
 end
 
 exit(0)

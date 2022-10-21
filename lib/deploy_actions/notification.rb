@@ -1,0 +1,2 @@
+module DeployActions::Notification
+end

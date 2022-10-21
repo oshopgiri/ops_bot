@@ -3,7 +3,7 @@
     "type": "header",
     "text": {
       "type": "plain_text",
-      "text": "New deploy triggered",
+      "text": "New <%= DeployActions::Utils.deploy_environment %> deploy triggered",
       "emoji": true
     }
   }, {
@@ -11,9 +11,8 @@
   }, {
     "type": "section",
     "text": {
-      "type": "plain_text",
-      "text": "<%= DeployActions::Utils.actor %> :ship: <%= DeployActions::Utils.ebs_application_name %>[<%= DeployActions::Utils.ebs_environment_name %>]",
-      "emoji": true
+      "type": "mrkdwn",
+      "text": "<%= DeployActions::Utils.actor %> :ship: <%= DeployActions::Utils.ebs_application_name %>[<%= DeployActions::Utils.ebs_environment_name %>]"
     },
     "accessory": {
       "type": "button",
