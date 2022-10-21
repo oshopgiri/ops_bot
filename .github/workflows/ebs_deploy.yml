@@ -36,6 +36,7 @@ env:
   BUILD_DIRECTORY: ./target
   BUILD_TYPE: ${{ inputs.build_type }}
   DEPLOY_ENVIRONMENT: ${{ inputs.deploy_environment }}
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SOURCE_DIRECTORY: ./app
   SOURCE_HOOKS_DIRECTORY: ./.github/hooks
 
