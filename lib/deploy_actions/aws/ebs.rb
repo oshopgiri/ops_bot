@@ -27,6 +27,14 @@ class DeployActions::AWS::EBS
     })
   end
 
+  def describe_environment
+    response = client.describe_environments({
+      environment_names: [DeployActions::Utils.ebs_environment_name]
+    })
+
+    response.environments&.first
+  end
+
   def retrieve_logs
     request_logs
 

@@ -1,6 +1,6 @@
 class DeployActions::Utils
   def self.normalized_branch_name
-    ENV['GITHUB_REF_NAME'].titleize.parameterize
+    branch_name.titleize.parameterize
   end
 
   def self.normalized_application_name
@@ -11,7 +11,45 @@ class DeployActions::Utils
     ENV['SERVICED_REPOS'].split(';').map(&:strip)
   end
 
+  # GitHub
+
+  def self.action_run_url
+    "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
+  end
+
+  def self.actor
+    ENV['GITHUB_ACTOR']
+  end
+
+  def self.actor_url
+    "https://github.com/#{actor}"
+  end
+
+  def self.branch_name
+    ENV['GITHUB_REF_NAME']
+  end
+
+  def self.branch_url
+    "https://github.com/#{repository_name}/tree/#{branch_name}"
+  end
+
+  def self.commit_reference
+    ENV['GITHUB_SHA']
+  end
+
+  def self.commit_url
+    "https://github.com/#{repository_name}/commit/#{commit_reference}"
+  end
+
+  def self.repository_name
+    ENV['GITHUB_REPOSITORY']
+  end
+
   # AWS
+
+  def self.aws_region
+    ENV['AWS_REGION']
+  end
 
   def self.access_key_id
     ENV['AWS_ACCESS_KEY_ID']
@@ -21,8 +59,25 @@ class DeployActions::Utils
     ENV['AWS_EBS_APPLICATION_NAME']
   end
 
+  def self.ebs_application_url
+    "https://#{aws_region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{aws_region}#/application/overview?applicationName=#{ebs_application_name}"
+  end
+
   def self.ebs_environment_name
     ENV['AWS_EBS_ENVIRONMENT_NAME']
+  end
+
+  def self.ebs_environment_url
+    environment_details = begin
+      ebs_client = DeployActions::AWS::EBS.new
+      ebs_client.describe_environment
+    rescue
+      nil
+    end
+
+    environment_details.present? ?
+      "https://#{aws_region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{aws_region}#/environment/dashboard?applicationName=#{ebs_application_name}&environmentId=#{environment_details.environment_id}" :
+      ebs_application_url
   end
 
   def self.ebs_instance_type
@@ -34,7 +89,7 @@ class DeployActions::Utils
   end
 
   def self.ec2_security_group_rule_description
-    "github-#{ENV['GITHUB_ACTOR']}"
+    "github-#{actor}"
   end
 
   def self.ec2_security_group_rule_ip_address
@@ -61,12 +116,6 @@ class DeployActions::Utils
     "#{normalized_application_name}/#{normalized_branch_name}/#{build_name}"
   end
 
-  # GitHub
-
-  def self.action_run_url
-    "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
-  end
-
   # Slack
 
   def self.slack_channel_ids
@@ -76,7 +125,7 @@ class DeployActions::Utils
   # Build
 
   def self.build_name
-    "ref-#{ENV['GITHUB_SHA']}.#{build_type}"
+    "ref-#{commit_reference}.#{build_type}"
   end
 
   def self.build_directory
@@ -92,7 +141,7 @@ class DeployActions::Utils
   end
 
   def self.build_version
-    "ver-#{ENV['GITHUB_SHA']}"
+    "ver-#{commit_reference}"
   end
 
   # Log
@@ -105,5 +154,15 @@ class DeployActions::Utils
 
   def self.source_directory
     ENV['SOURCE_DIRECTORY']
+  end
+
+  # Deploy
+
+  def self.deploy_environment
+    ENV['DEPLOY_ENVIRONMENT'].to_s.underscore
+  end
+
+  def self.is_production_deploy?
+    deploy_environment.casecmp? 'production'
   end
 end

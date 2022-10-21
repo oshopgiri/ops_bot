@@ -17,7 +17,12 @@ else
   end
 end
 
-puts "Deploying..."
+puts 'Deploying...'
 ebs_client.deploy_version
+
+if DeployActions::Utils.is_production_deploy?
+  slack_client = DeployActions::Slack.new
+  slack_client.notify(view_file: 'ebs_deploy.json.erb')
+end
 
 exit(0)

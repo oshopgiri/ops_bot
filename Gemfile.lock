@@ -69,6 +69,7 @@ GEM
       gli
       hashie
       websocket-driver
+    tilt (2.0.11)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     websocket-driver (0.7.5)
@@ -90,6 +91,7 @@ DEPENDENCIES
   nokogiri
   pry
   slack-ruby-client
+  tilt
   zeitwerk
 
 BUNDLED WITH

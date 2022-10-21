@@ -3,23 +3,6 @@ require 'bundler/setup'
 require 'active_support'
 require 'active_support/core_ext'
 
-Bundler.require(:default)
-
-if ['development'].include? ENV['RUBY_ENV']
-  Bundler.require(:development)
-  Dotenv.load('.env', '.secrets')
-end
-
-loader = Zeitwerk::Loader.new
-loader.push_dir('lib')
-loader.inflector.inflect("aws" => "AWS")
-loader.inflector.inflect("ebs" => "EBS")
-loader.inflector.inflect("ec2" => "EC2")
-loader.inflector.inflect("github" => "GitHub")
-loader.inflector.inflect("iam" => "IAM")
-loader.inflector.inflect("s3" => "S3")
-loader.setup
-
-Slack.configure do |config|
-  config.token = ENV['SLACK_BOT_TOKEN']
-end
+require_relative './application.rb'
+require_relative './initializers.rb'
+require_relative './helpers.rb'
