@@ -26,7 +26,7 @@ end
 slack_client = DeployActions::Notification::Slack.new
 slack_client.notify(
   view_file: 'rotate_iam_github_action_keys.json.erb',
-  payload: { new_access_key: new_access_keys }
+  payload: { new_access_key: new_access_key }
 )
 
 exit(0)
