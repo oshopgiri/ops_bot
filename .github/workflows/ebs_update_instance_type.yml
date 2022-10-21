@@ -43,4 +43,4 @@ jobs:
         with:
           bundler-cache: true
       - name: Updating configuration - InstanceType
-        run: ruby ebs_update_insatnce_type.rb
+        run: ruby ./bin/ebs_update_insatnce_type.rb

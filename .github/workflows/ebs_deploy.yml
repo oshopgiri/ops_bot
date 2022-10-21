@@ -93,7 +93,7 @@ jobs:
       - name: Building
         run: |
           mkdir -p $BUILD_DIRECTORY
-          ruby build.rb
+          ruby ./bin/build.rb
           if [ "$?" -ne "0" ]
           then
             exit 1
@@ -101,7 +101,7 @@ jobs:
       - name: Triggering deploy
         if: success()
         run: |
-          ruby ebs_deploy.rb
+          ruby ./bin/ebs_deploy.rb
           if [ "$?" -ne "0" ]
           then
             exit 1
