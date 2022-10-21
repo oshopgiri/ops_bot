@@ -3,8 +3,14 @@ name: ebs
 on:
   workflow_call:
     inputs:
+      action_environment:
+        required: false
+        type: string
       aws_ebs_environment_name:
         required: true
+        type: string
+      slack_channel_ids:
+        required: false
         type: string
     secrets:
       AWS_ACCESS_KEY_ID:
@@ -13,13 +19,19 @@ on:
         required: true
       AWS_REGION:
         required: true
+      SLACK_BOT_TOKEN:
+        required: false
 
 env:
+  ACTION_ENVIRONMENT: ${{ inputs.action_environment }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
+  GITHUB_ACTION_NAME: ebs_fetch_logs
   LOG_FILE_PATH: ./${{ inputs.aws_ebs_environment_name }}_logs.zip
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
 
 jobs:
   fetch_logs:
@@ -45,3 +57,6 @@ jobs:
         with:
           name: ${{ env.AWS_EBS_ENVIRONMENT_NAME }}
           path: ${{ env.LOG_FILE_PATH }}
+      - name: Notify failure
+        if: failure()
+        run: ruby ./bin/slack_notify_failed_action.rb

@@ -3,6 +3,9 @@ name: iam_github_action
 on:
   workflow_call:
     inputs:
+      action_environment:
+        required: false
+        type: string
       serviced_repos:
         required: true
         type: string
@@ -24,11 +27,13 @@ on:
         required: false
 
 env:
+  ACTION_ENVIRONMENT: ${{ inputs.action_environment }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_IAM_USER_NAME: ${{ secrets.AWS_IAM_USER_NAME }}
   GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+  GITHUB_ACTION_NAME: rotate_iam_github_action_keys
   SERVICED_REPOS: ${{ inputs.serviced_repos }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
@@ -49,3 +54,6 @@ jobs:
           bundler-cache: true
       - name: Rotating keys
         run: ruby ./bin/rotate_iam_github_action_keys.rb
+      - name: Notify failure
+        if: failure()
+        run: ruby ./bin/slack_notify_failed_action.rb

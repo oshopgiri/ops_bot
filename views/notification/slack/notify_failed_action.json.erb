@@ -1,0 +1,28 @@
+[
+  {
+    "type": "header",
+    "text": {
+      "type": "plain_text",
+      "text": ":rotating_light: Action run failed! :rotating_light:",
+      "emoji": true
+    }
+  }, {
+  "type": "divider"
+  }, {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "<%= DeployActions::Utils.repository_name %> [<%= DeployActions::Utils.action_name %><%= DeployActions::Utils.action_run_suffix %>] <%= DeployActions::Utils.is_production_action? ? "\<!channel|channel\>" : "" %>"
+    },
+    "accessory": {
+      "type": "button",
+      "text": {
+        "type": "plain_text",
+        "text": "Logs",
+        "emoji": true
+      },
+      "style": "danger",
+      "url": "<%= DeployActions::Utils.action_run_url %>"
+    }
+  }
+]

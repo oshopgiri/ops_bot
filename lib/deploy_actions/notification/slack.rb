@@ -1,7 +1,12 @@
 class DeployActions::Notification::Slack < DeployActions::Notification::Base
   def initialize
-    client.auth_test
-    @channel_ids = DeployActions::Utils.slack_channel_ids
+    @channel_ids = begin
+      client.auth_test
+      DeployActions::Utils.slack_channel_ids
+    rescue
+      puts '[ERROR] Failed to initialize Slack client'
+      nil
+    end
   end
 
   def notify(view_file:, payload: {})

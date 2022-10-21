@@ -3,6 +3,9 @@ name: ebs
 on:
   workflow_call:
     inputs:
+      action_environment:
+        required: false
+        type: string
       aws_ebs_application_name:
         required: true
         type: string
@@ -14,9 +17,6 @@ on:
         type: string
       build_type:
         required: true
-        type: string
-      deploy_environment:
-        required: false
         type: string
       slack_channel_ids:
         required: false
@@ -32,6 +32,7 @@ on:
         required: false
 
 env:
+  ACTION_ENVIRONMENT: ${{ inputs.action_environment }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -40,7 +41,7 @@ env:
   AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
   BUILD_DIRECTORY: ./target
   BUILD_TYPE: ${{ inputs.build_type }}
-  DEPLOY_ENVIRONMENT: ${{ inputs.deploy_environment }}
+  GITHUB_ACTION_NAME: ebs_deploy
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
   SOURCE_DIRECTORY: ./app
@@ -87,22 +88,17 @@ jobs:
       - name: Running pre-build hook
         run: |
           if test -f "$SOURCE_HOOKS_DIRECTORY/pre_build.sh"; then
-            $SOURCE_HOOKS_DIRECTORY/pre_build.sh $DEPLOY_ENVIRONMENT
+            $SOURCE_HOOKS_DIRECTORY/pre_build.sh $ACTION_ENVIRONMENT
           fi
         working-directory: ${{ env.SOURCE_DIRECTORY }}
       - name: Building
         run: |
           mkdir -p $BUILD_DIRECTORY
           ruby ./bin/build.rb
-          if [ "$?" -ne "0" ]
-          then
-            exit 1
-          fi
       - name: Triggering deploy
         if: success()
         run: |
           ruby ./bin/ebs_deploy.rb
-          if [ "$?" -ne "0" ]
-          then
-            exit 1
-          fi
+      - name: Notify failure
+        if: failure()
+        run: ruby ./bin/slack_notify_failed_action.rb

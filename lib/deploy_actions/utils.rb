@@ -13,8 +13,28 @@ class DeployActions::Utils
 
   # GitHub
 
+  def self.action_name
+    ENV['GITHUB_ACTION_NAME']
+  end
+
+  def self.action_run_attempt
+    ENV['GITHUB_RUN_ATTEMPT']
+  end
+
+  def self.action_run_id
+    ENV['GITHUB_RUN_ID']
+  end
+
+  def self.action_run_number
+    ENV['GITHUB_RUN_NUMBER']
+  end
+
+  def self.action_run_suffix
+    "##{action_run_number}_#{action_run_attempt}"
+  end
+
   def self.action_run_url
-    "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
+    "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{action_run_id}/attempts/#{action_run_attempt}"
   end
 
   def self.actor
@@ -156,13 +176,13 @@ class DeployActions::Utils
     ENV['SOURCE_DIRECTORY']
   end
 
-  # Deploy
+  # Action
 
-  def self.deploy_environment
-    ENV['DEPLOY_ENVIRONMENT'].to_s.underscore
+  def self.action_environment
+    ENV['ACTION_ENVIRONMENT'].to_s.underscore
   end
 
-  def self.is_production_deploy?
-    deploy_environment.casecmp? 'production'
+  def self.is_production_action?
+    action_environment.casecmp? 'production'
   end
 end

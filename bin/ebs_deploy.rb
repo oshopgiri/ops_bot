@@ -20,7 +20,7 @@ end
 puts 'Deploying...'
 ebs_client.deploy_version
 
-if DeployActions::Utils.is_production_deploy?
+if DeployActions::Utils.is_production_action?
   slack_client = DeployActions::Notification::Slack.new
   slack_client.notify(view_file: 'ebs_deploy.json.erb')
 end
