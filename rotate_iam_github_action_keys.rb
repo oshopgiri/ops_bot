@@ -1,7 +1,6 @@
 require_relative './config/boot.rb'
 
 iam_client = DeployActions::AWS::IAM.new
-slack_client = DeployActions::Slack.new
 
 new_access_key = begin
   iam_client.rotate_access_key
@@ -24,6 +23,7 @@ if new_access_key.present?
   end
 end
 
+slack_client = DeployActions::Notification::Slack.new
 slack_client.notify(
   view_file: 'rotate_iam_github_action_keys.json.erb',
   payload: { new_access_key: new_access_keys }
