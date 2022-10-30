@@ -8,13 +8,13 @@ class DeployActions::Utils
   end
 
   def self.parsed_serviced_repos
-    ENV['SERVICED_REPOS'].split(';').map(&:strip)
+    ENV['ACCESS_KEY_SERVICED_REPOS'].split(';').map(&:strip)
   end
 
   # GitHub
 
   def self.action_run_url
-    "https://github.com/#{ENV['GITHUB_REPOSITORY']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
+    "https://github.com/#{ENV['repository_name']}/actions/runs/#{ENV['GITHUB_RUN_ID']}/attempts/#{ENV['GITHUB_RUN_ATTEMPT']}"
   end
 
   def self.actor
@@ -93,15 +93,15 @@ class DeployActions::Utils
   end
 
   def self.ec2_security_group_rule_ip_address
-    ENV['AWS_EC2_SGR_IP_ADDRESS'].to_s
+    ENV['AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS'].to_s
   end
 
   def self.ec2_security_group_rule_port
-    ENV['AWS_EC2_SGR_PORT']
+    ENV['AWS_EC2_SECURITY_GROUP_RULE_PORT']
   end
 
   def self.ec2_security_group_rule_protocol
-    ENV['AWS_EC2_SGR_PROTOCOL']
+    ENV['AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL']
   end
 
   def self.iam_user_name
@@ -158,11 +158,11 @@ class DeployActions::Utils
 
   # Deploy
 
-  def self.deploy_environment
-    ENV['DEPLOY_ENVIRONMENT'].to_s.underscore
+  def self.workflow_environment
+    ENV['WORKFLOW_ENVIRONMENT'].to_s.underscore
   end
 
   def self.is_production_deploy?
-    deploy_environment.casecmp? 'production'
+    workflow_environment.casecmp? 'production'
   end
 end

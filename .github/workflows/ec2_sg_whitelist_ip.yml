@@ -27,9 +27,9 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_EC2_SECURITY_GROUP_ID: ${{ secrets.AWS_EC2_SECURITY_GROUP_ID }}
-  AWS_EC2_SGR_IP_ADDRESS: ${{ inputs.ip_address }}
-  AWS_EC2_SGR_PORT: ${{ inputs.port }}
-  AWS_EC2_SGR_PROTOCOL: ${{ inputs.protocol }}
+  AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS: ${{ inputs.ip_address }}
+  AWS_EC2_SECURITY_GROUP_RULE_PORT: ${{ inputs.port }}
+  AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL: ${{ inputs.protocol }}
 
 jobs:
   whitelist_ip:
@@ -38,7 +38,7 @@ jobs:
       - name: Logging run context
         run: |
           echo "user: ${{ github.actor }},
-          opening port: $AWS_EC2_SGR_PORT over protocol: $AWS_EC2_SGR_PROTOCOL for IP: $AWS_EC2_SGR_IP_ADDRESS"
+          opening port: $AWS_EC2_SECURITY_GROUP_RULE_PORT over protocol: $AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL for IP: $AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS"
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:

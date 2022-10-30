@@ -15,10 +15,10 @@ on:
       build_type:
         required: true
         type: string
-      deploy_environment:
+      slack_channel_ids:
         required: false
         type: string
-      slack_channel_ids:
+      workflow_environment:
         required: false
         type: string
     secrets:
@@ -40,11 +40,11 @@ env:
   AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
   BUILD_DIRECTORY: ./target
   BUILD_TYPE: ${{ inputs.build_type }}
-  DEPLOY_ENVIRONMENT: ${{ inputs.deploy_environment }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
   SOURCE_DIRECTORY: ./app
-  SOURCE_HOOKS_DIRECTORY: ./.github/hooks
+  SOURCE_HOOKS_SUBDIRECTORY: ./.github/hooks
+  WORKFLOW_ENVIRONMENT: ${{ inputs.workflow_environment }}
 
 jobs:
   deploy:
@@ -79,15 +79,15 @@ jobs:
           java-version: 8
       - name: Making hooks executable
         run: |
-          for script in $(find $SOURCE_HOOKS_DIRECTORY -name '*.sh');
+          for script in $(find $SOURCE_HOOKS_SUBDIRECTORY -name '*.sh');
           do
             chmod +x $script
           done
         working-directory: ${{ env.SOURCE_DIRECTORY }}
       - name: Running pre-build hook
         run: |
-          if test -f "$SOURCE_HOOKS_DIRECTORY/pre_build.sh"; then
-            $SOURCE_HOOKS_DIRECTORY/pre_build.sh $DEPLOY_ENVIRONMENT
+          if test -f "$SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh"; then
+            $SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh $WORKFLOW_ENVIRONMENT
           fi
         working-directory: ${{ env.SOURCE_DIRECTORY }}
       - name: Building

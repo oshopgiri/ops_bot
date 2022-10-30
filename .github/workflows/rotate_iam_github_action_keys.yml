@@ -24,12 +24,12 @@ on:
         required: false
 
 env:
+  ACCESS_KEY_SERVICED_REPOS: ${{ inputs.serviced_repos }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_IAM_USER_NAME: ${{ secrets.AWS_IAM_USER_NAME }}
   GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-  SERVICED_REPOS: ${{ inputs.serviced_repos }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
 
