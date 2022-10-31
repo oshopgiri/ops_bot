@@ -69,7 +69,7 @@ class DeployActions::Utils
 
   def self.ebs_environment_url
     environment_details = begin
-      ebs_client = DeployActions::AWS::EBS.new
+      ebs_client = OpsBot::AWS::EBS.new
       ebs_client.describe_environment
     rescue
       nil

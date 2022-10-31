@@ -1,6 +1,6 @@
 require_relative '../config/boot.rb'
 
-ebs_client = DeployActions::AWS::EBS.new
+ebs_client = OpsBot::AWS::EBS.new
 ebs_version_label = DeployActions::Utils.build_version
 
 if ebs_client.version_exists?
@@ -21,7 +21,7 @@ puts 'Deploying...'
 ebs_client.deploy_version
 
 if DeployActions::Utils.is_production_deploy?
-  slack_client = DeployActions::Notification::Slack.new
+  slack_client = OpsBot::Notification::Slack.new
   slack_client.notify(view_file: 'ebs_deploy.json.erb')
 end
 
