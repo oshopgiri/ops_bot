@@ -8,13 +8,15 @@ module OpsBot::Concerns::Renderable
   class_methods do
     private
 
-      def render(view_file:, instance: Object.new, payload: {})
-        Tilt.new("./templates/#{render_context}/#{view_file}").render(instance, payload)
+      def render(view_file:, context: render_context, instance: Object.new, payload: {})
+        Tilt.new("./templates/#{context}/#{view_file}").render(instance, payload)
       end
 
       def render_context
-        class_name = self.name.dup
-        class_name.split('::')[1..].join('::').underscore
+        @render_context ||= begin
+          class_name = self.name.dup
+          class_name.split('::')[1..].join('::').underscore
+        end
       end
   end
 end
