@@ -9,7 +9,7 @@ rescue
 end
 
 if new_access_key.present?
-  DeployActions::Utils.parsed_serviced_repos.each do |repo|
+  OpsBot::Context.env.access_key.serviced_repos.split(';').map(&:strip).each do |repo|
     github_client = OpsBot::GitHub.new(repo: repo)
     {
       'AWS_ACCESS_KEY_ID': new_access_key.access_key_id,

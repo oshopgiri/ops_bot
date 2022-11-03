@@ -12,7 +12,7 @@
     "type": "section",
     "text": {
       "type": "mrkdwn",
-      "text": "<%= OpsBot::Context.env.github.actor %> :ship: <%= OpsBot::Context.env.aws.ebs.application_name %> [<%= OpsBot::Context.env.aws.ebs.environment_name %>]"
+      "text": "<%= OpsBot::Context.env.github.actor.username %> :ship: <%= OpsBot::Context.env.aws.ebs.application.name %> [<%= OpsBot::Context.env.aws.ebs.application.environment.name %>]"
     },
     "accessory": {
       "type": "button",
@@ -21,7 +21,7 @@
         "text": "Logs",
         "emoji": true
       },
-      "url": "<%= DeployActions::Utils.action_run_url %>"
+      "url": "<%= OpsBot::Context.utils.github.action.run.url %>"
     }
   }, {
     "type": "actions",
@@ -33,7 +33,7 @@
           "text": "branch: <%= OpsBot::Context.env.github.branch.ref %>",
           "emoji": true
         },
-        "url": "<%= DeployActions::Utils.branch_url %>"
+        "url": "<%= OpsBot::Context.utils.github.branch.ref_url %>"
       }, {
         "type": "button",
         "text": {
@@ -41,7 +41,7 @@
           "text": "ref: <%= OpsBot::Context.env.github.branch.sha %>",
           "emoji": true
         },
-        "url": "<%= DeployActions::Utils.commit_url %>"
+        "url": "<%= OpsBot::Context.utils.github.branch.sha_url %>"
       }
     ]
   }

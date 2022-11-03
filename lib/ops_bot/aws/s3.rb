@@ -1,8 +1,8 @@
 class OpsBot::AWS::S3
   def initialize
     @bucket = OpsBot::Context.env.aws.s3.bucket_name
-    @key = DeployActions::Utils.s3_build_key
-    @build_path = DeployActions::Utils.build_path
+    @key = OpsBot::Context.utils.build.s3_key
+    @build_path = OpsBot::Context.utils.build.path
   end
 
   def build_exists?

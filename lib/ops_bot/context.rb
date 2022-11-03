@@ -2,12 +2,13 @@ class OpsBot::Context
   include OpsBot::Concerns::Renderable
 
   class << self
-    attr_reader :env, :secrets
+    attr_reader :env, :secrets, :utils
   end
 
   def self.build
     build_env
     build_secrets
+    build_utils
   end
 
   private
@@ -22,6 +23,13 @@ class OpsBot::Context
     def self.build_secrets
       @secrets = JSON.parse(
         render(view_file: 'secrets.json.erb'),
+        object_class: OpenStruct
+      )
+    end
+
+    def self.build_utils
+      @utils = JSON.parse(
+        render(view_file: 'utils.json.erb'),
         object_class: OpenStruct
       )
     end

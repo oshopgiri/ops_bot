@@ -1,0 +1,42 @@
+{
+  "aws": {
+    "ebs": {
+      "application": {
+        "url": "<%= "https://#{OpsBot::Context.secrets.aws.region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{OpsBot::Context.secrets.aws.region}#/application/overview?applicationName=#{OpsBot::Context.env.aws.ebs.application.name}" %>",
+        "environment": {
+          "url": "<%=  %>"
+        }
+      }
+    },
+    "ec2": {
+      "security_group": {
+        "rule": {
+          "description": "<%= "github-#{OpsBot::Context.env.github.actor.username}" %>"
+        }
+      }
+    }
+  },
+  "build": {
+    "name": "<%= "ref-#{OpsBot::Context.env.github.branch.sha}.#{OpsBot::Context.env.build.type}" %>",
+    "path": "<%= "#{OpsBot::Context.env.build.directory}/ref-#{OpsBot::Context.env.github.branch.sha}.#{OpsBot::Context.env.build.type}" %>",
+    "s3_key": "<%= "#{OpsBot::Context.env.aws.ebs.application.name&.parameterize}/#{OpsBot::Context.env.github.branch.ref.titleize.parameterize}/ref-#{OpsBot::Context.env.github.branch.sha}.#{OpsBot::Context.env.build.type}" %>",
+    "version": "<%= "ver-#{OpsBot::Context.env.github.branch.sha}" %>"
+  },
+  "github": {
+    "action": {
+      "run": {
+        "url": "<%= "https://github.com/#{OpsBot::Context.env.github.repository.name}/actions/runs/#{OpsBot::Context.env.github.action.run.id}/attempts/#{OpsBot::Context.env.github.action.run.attempt}" %>"
+      },
+      "actor": {
+        "profile_url": "<%= "https://github.com/#{OpsBot::Context.env.github.actor.username}" %>"
+      },
+      "branch": {
+        "ref_url": "<%= "https://github.com/#{OpsBot::Context.env.github.repository.name}/tree/#{OpsBot::Context.env.github.branch.ref}" %>",
+        "sha_url": "<%= "https://github.com/#{OpsBot::Context.env.github.repository.name}/commit/#{OpsBot::Context.env.github.branch.sha}" %>"
+      }
+    }
+  },
+  "workflow": {
+    "is_production?": <%= OpsBot::Context.env.workflow.environment.casecmp? 'production' %>
+  }
+}

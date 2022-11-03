@@ -1,12 +1,12 @@
 class OpsBot::AWS::EBS
   def initialize
-    @application_name = OpsBot::Context.env.aws.ebs.application_name
-    @environment_name = OpsBot::Context.env.aws.ebs.environment_name
-    @instance_type = OpsBot::Context.env.aws.ebs.instance_type
+    @application_name = OpsBot::Context.env.aws.ebs.application.name
+    @environment_name = OpsBot::Context.env.aws.ebs.application.environment.name
+    @instance_type = OpsBot::Context.env.aws.ebs.application.environment.config.instance_type
     @log_file_path = OpsBot::Context.env.log.file_path
     @s3_bucket = OpsBot::Context.env.aws.s3.bucket_name
-    @s3_key = DeployActions::Utils.s3_build_key
-    @version_label = DeployActions::Utils.build_version
+    @s3_key = OpsBot::Context.utils.build.s3_key
+    @version_label = OpsBot::Context.utils.build.version
   end
 
   def create_version

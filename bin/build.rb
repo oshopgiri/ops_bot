@@ -1,6 +1,6 @@
 require_relative '../config/boot.rb'
 
-s3_build_url = "s3://#{OpsBot::Context.env.aws.s3.bucket_name}/#{DeployActions::Utils.s3_build_key}"
+s3_build_url = "s3://#{OpsBot::Context.env.aws.s3.bucket_name}/#{OpsBot::Context.utils.build.s3_key}"
 s3_client = OpsBot::AWS::S3.new
 
 if s3_client.build_exists?
