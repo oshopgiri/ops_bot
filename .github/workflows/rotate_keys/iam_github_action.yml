@@ -1,10 +1,13 @@
-name: ebs
+name: rotate_keys
 
 on:
   workflow_call:
     inputs:
-      aws_ebs_environment_name:
+      serviced_repos:
         required: true
+        type: string
+      slack_channel_ids:
+        required: false
         type: string
     secrets:
       AWS_ACCESS_KEY_ID:
@@ -13,35 +16,36 @@ on:
         required: true
       AWS_REGION:
         required: true
+      AWS_IAM_USER_NAME:
+        required: true
+      GH_ACCESS_TOKEN:
+        required: true
+      SLACK_BOT_TOKEN:
+        required: false
 
 env:
+  ACCESS_KEY_SERVICED_REPOS: ${{ inputs.serviced_repos }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
-  LOG_FILE_PATH: ./${{ inputs.aws_ebs_environment_name }}_logs.zip
+  AWS_IAM_USER_NAME: ${{ secrets.AWS_IAM_USER_NAME }}
+  GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
 
 jobs:
-  fetch_logs:
+  iam_github_action:
     runs-on: ubuntu-latest
     steps:
-      - name: Logging run context
-        run: |
-          echo "user: ${{ github.actor }},
-          fetching logs for EBS environment: $AWS_EBS_ENVIRONMENT_NAME"
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:
           repository: oshopgiri/deploy_actions
           ref: master
+          path: ./
       - name: Setting-up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Fetching logs
-        run: ruby ./bin/ebs_fetch_logs.rb
-      - name: Publishing logs as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.AWS_EBS_ENVIRONMENT_NAME }}
-          path: ${{ env.LOG_FILE_PATH }}
+      - name: Rotating keys
+        run: ruby ./bin/rotate_iam_github_action_keys.rb

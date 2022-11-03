@@ -1,4 +1,4 @@
-name: ebs
+name: aws_ebs
 
 on:
   workflow_call:
@@ -19,7 +19,7 @@ on:
         required: false
         type: string
       workflow_environment:
-        required: false
+        required: true
         type: string
     secrets:
       AWS_ACCESS_KEY_ID:

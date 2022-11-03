@@ -1,12 +1,9 @@
-name: ebs
+name: aws_ebs
 
 on:
   workflow_call:
     inputs:
       aws_ebs_environment_name:
-        required: true
-        type: string
-      aws_ebs_instance_type:
         required: true
         type: string
     secrets:
@@ -22,17 +19,16 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
-  AWS_EBS_INSTANCE_TYPE: ${{ inputs.aws_ebs_instance_type }}
+  LOG_FILE_PATH: ./${{ inputs.aws_ebs_environment_name }}_logs.zip
 
 jobs:
-  update_instance_type:
+  fetch_logs:
     runs-on: ubuntu-latest
     steps:
       - name: Logging run context
         run: |
           echo "user: ${{ github.actor }},
-          updating EBS environment: $AWS_EBS_ENVIRONMENT_NAME,
-          instance type to: $AWS_EBS_INSTANCE_TYPE"
+          fetching logs for EBS environment: $AWS_EBS_ENVIRONMENT_NAME"
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:
@@ -42,5 +38,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Updating configuration - InstanceType
-        run: ruby ./bin/ebs_update_insatnce_type.rb
+      - name: Fetching logs
+        run: ruby ./bin/ebs_fetch_logs.rb
+      - name: Publishing logs as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.AWS_EBS_ENVIRONMENT_NAME }}
+          path: ${{ env.LOG_FILE_PATH }}

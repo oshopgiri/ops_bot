@@ -1,4 +1,4 @@
-name: ec2_sg
+name: aws_ec2_security_group
 
 on:
   workflow_call:

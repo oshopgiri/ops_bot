@@ -13,6 +13,13 @@ gem 'tilt'
 gem 'zeitwerk'
 
 group :development do
-  gem 'dotenv'
   gem 'pry'
+end
+
+group :test do
+  gem 'rspec'
+end
+
+group :development, :test do
+  gem 'dotenv'
 end
