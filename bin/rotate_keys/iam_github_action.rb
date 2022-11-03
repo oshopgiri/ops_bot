@@ -25,8 +25,10 @@ end
 
 slack_client = OpsBot::Notification::Slack.new
 slack_client.notify(
-  view_file: 'rotate_iam_github_action_keys.json.erb',
-  payload: { new_access_key: new_access_key }
+  template: 'rotate_keys-iam_github_action.json.erb',
+  payload: {
+    new_access_key: new_access_key
+  }
 )
 
 exit(0)

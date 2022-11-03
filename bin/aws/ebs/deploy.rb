@@ -22,7 +22,7 @@ ebs_client.deploy_version
 
 if OpsBot::Context.utils.workflow.is_production?
   slack_client = OpsBot::Notification::Slack.new
-  slack_client.notify(view_file: 'ebs_deploy.json.erb')
+  slack_client.notify(template: 'aws-ebs-deploy.json.erb')
 end
 
 exit(0)

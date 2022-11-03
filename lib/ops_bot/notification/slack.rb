@@ -1,17 +1,21 @@
 module OpsBot::Notification
   class Slack < Base
     def initialize
-      client.auth_test
-      @channel_ids = OpsBot::Context.env.slack.channel_ids
+      @channel_ids = begin
+        client.auth_test
+        OpsBot::Context.env.slack.channel_ids
+      rescue
+        nil
+      end
     end
 
-    def notify(view_file:, payload: {})
+    def notify(template:, payload: {})
       return if @channel_ids.blank?
 
       client.chat_postMessage(
         channel: @channel_ids,
         blocks: render(
-          view_file: view_file,
+          view_file: template,
           instance: self,
           payload: payload
         )
