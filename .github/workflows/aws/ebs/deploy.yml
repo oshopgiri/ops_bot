@@ -94,15 +94,7 @@ jobs:
         run: |
           mkdir -p $BUILD_DIRECTORY
           ruby ./bin/build.rb
-          if [ "$?" -ne "0" ]
-          then
-            exit 1
-          fi
       - name: Triggering deploy
         if: success()
         run: |
-          ruby ./bin/ebs_deploy.rb
-          if [ "$?" -ne "0" ]
-          then
-            exit 1
-          fi
+          ruby ./bin/aws/ebs/deploy.rb

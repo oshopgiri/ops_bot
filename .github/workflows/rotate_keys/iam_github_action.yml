@@ -48,4 +48,4 @@ jobs:
         with:
           bundler-cache: true
       - name: Rotating keys
-        run: ruby ./bin/rotate_iam_github_action_keys.rb
+        run: ruby ./bin/rotate_keys/iam_github_action.rb

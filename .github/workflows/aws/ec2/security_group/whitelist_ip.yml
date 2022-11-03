@@ -49,4 +49,4 @@ jobs:
         with:
           bundler-cache: true
       - name: Whitelisting new IP
-        run: ruby ./bin/ec2_sg_whitelist_ip.rb
+        run: ruby ./bin/aws/ec2/security_group/whitelist_ip.rb

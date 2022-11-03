@@ -39,7 +39,7 @@ jobs:
         with:
           bundler-cache: true
       - name: Fetching logs
-        run: ruby ./bin/ebs_fetch_logs.rb
+        run: ruby ./bin/aws/ebs/fetch_logs.rb
       - name: Publishing logs as artifact
         uses: actions/upload-artifact@v3
         with:
