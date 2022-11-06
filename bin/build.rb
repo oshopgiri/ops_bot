@@ -14,7 +14,7 @@ else
   build_client = OpsBot::Build.new
 
   puts 'Building...'
-  build_client.build
+  build_client.package
 
   unless build_client.build_exists?
     puts 'Build failed. Check logs for errors.'
