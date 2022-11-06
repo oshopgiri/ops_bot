@@ -1,4 +1,9 @@
-require_relative '../config/boot.rb'
+require 'pathname'
+boot_script = File.join(
+  Pathname.new('/').relative_path_from(Pathname.new("/#{File.dirname(__FILE__)}")),
+  'config/boot.rb'
+)
+require_relative boot_script
 
 s3_build_url = "s3://#{OpsBot::Context.env.aws.s3.bucket_name}/#{OpsBot::Context.utils.build.s3_key}"
 s3_client = OpsBot::AWS::S3.new

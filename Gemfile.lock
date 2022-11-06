@@ -58,6 +58,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.13.8-x86_64-darwin)
       racc (~> 1.4)
+    pathname (0.2.0)
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -103,6 +104,7 @@ DEPENDENCIES
   aws-sdk-s3
   dotenv
   nokogiri
+  pathname
   pry
   rspec
   slack-ruby-client
