@@ -1,5 +1,15 @@
 class Application
   ENVIRONMENTS = %i[development test production].freeze
+  INFLECTIONS = {
+    'aws'    => 'AWS',
+    'ebs'    => 'EBS',
+    'ec2'    => 'EC2',
+    'github' => 'GitHub',
+    'iam'    => 'IAM',
+    's3'     => 'S3',
+    'war'    => 'WAR',
+    'zip'    => 'ZIP'
+  }
 
   def self.groups
     @groups ||= [
