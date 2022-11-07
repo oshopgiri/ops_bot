@@ -5,8 +5,14 @@ boot_script = File.join(
 )
 require_relative boot_script
 
-security_group_client = OpsBot::AWS::EC2::SecurityGroup.new
-security_group_client.revoke_old_ips
-security_group_client.whitelist_ip
+class AWSEC2SecurityGroupWhitelistIP
+  def self.perform
+    security_group_client = OpsBot::AWS::EC2::SecurityGroup.new
+    security_group_client.revoke_old_ips
+    security_group_client.whitelist_ip
 
-exit(0)
+    0
+  end
+end
+
+exit(AWSEC2SecurityGroupWhitelistIP.perform)

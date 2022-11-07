@@ -5,7 +5,13 @@ boot_script = File.join(
 )
 require_relative boot_script
 
-ebs_client = OpsBot::AWS::EBS.new
-ebs_client.update_instance_type
+class AWSEBSUpdateInstanceType
+  def self.perform
+    ebs_client = OpsBot::AWS::EBS.new
+    ebs_client.update_instance_type
 
-exit(0)
+    0
+  end
+end
+
+exit(AWSEBSUpdateInstanceType.perform)
