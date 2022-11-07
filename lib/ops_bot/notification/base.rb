@@ -1,5 +1,5 @@
 class OpsBot::Notification::Base
-  include OpsBot::Concerns::Renderable
+  include OpsBot::Concern::Renderable
 
   def notify(template:, payload:)
     raise 'method definition missing!'

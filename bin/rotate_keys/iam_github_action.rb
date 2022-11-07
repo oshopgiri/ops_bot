@@ -7,13 +7,13 @@ require_relative boot_script
 
 class RotateKeysIAMGitHubAction
   def self.perform
-    iam_client = OpsBot::AWS::IAM.new
+    iam_client = OpsBot::Integration::AWS::IAM.new
 
     begin
       new_access_key = iam_client.rotate_access_key
 
       OpsBot::Context.env.access_key.serviced_repos.split(';').map(&:strip).each do |repo|
-        github_client = OpsBot::GitHub.new(repo: repo)
+        github_client = OpsBot::Integration::GitHub.new(repo: repo)
         {
           'AWS_ACCESS_KEY_ID': new_access_key.access_key_id,
           'AWS_SECRET_ACCESS_KEY': new_access_key.secret_access_key

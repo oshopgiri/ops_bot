@@ -1,2 +1,0 @@
-module OpsBot::AWS
-end

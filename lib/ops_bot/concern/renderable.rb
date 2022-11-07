@@ -1,4 +1,4 @@
-module OpsBot::Concerns::Renderable
+module OpsBot::Concern::Renderable
   extend ActiveSupport::Concern
 
   included do

@@ -7,7 +7,7 @@ require_relative boot_script
 
 class AWSEC2SecurityGroupWhitelistIP
   def self.perform
-    security_group_client = OpsBot::AWS::EC2::SecurityGroup.new
+    security_group_client = OpsBot::Integration::AWS::EC2::SecurityGroup.new
     security_group_client.revoke_old_ips
     security_group_client.whitelist_ip
 

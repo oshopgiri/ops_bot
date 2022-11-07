@@ -8,7 +8,7 @@ require_relative boot_script
 class Build
   def self.perform
     s3_build_url = "s3://#{OpsBot::Context.env.aws.s3.bucket_name}/#{OpsBot::Context.utils.build.s3_key}"
-    s3_client = OpsBot::AWS::S3.new
+    s3_client = OpsBot::Integration::AWS::S3.new
 
     if s3_client.build_exists?
       puts "Existing build found on S3: #{s3_build_url}"

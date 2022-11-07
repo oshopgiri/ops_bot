@@ -7,7 +7,7 @@ require_relative boot_script
 
 class AWSEBSUpdateInstanceType
   def self.perform
-    ebs_client = OpsBot::AWS::EBS.new
+    ebs_client = OpsBot::Integration::AWS::EBS.new
     ebs_client.update_instance_type
 
     0

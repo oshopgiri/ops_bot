@@ -1,4 +1,4 @@
-class OpsBot::AWS::EC2::SecurityGroup
+class OpsBot::Integration::AWS::EC2::SecurityGroup
   def initialize
     @description = OpsBot::Context.utils.aws.ec2.security_group.rule.description
     @ip_address = OpsBot::Context.env.aws.ec2.security_group.rule.ip_address

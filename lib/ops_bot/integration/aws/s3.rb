@@ -1,4 +1,4 @@
-class OpsBot::AWS::S3
+class OpsBot::Integration::AWS::S3
   def initialize
     @bucket = OpsBot::Context.env.aws.s3.bucket_name
     @key = OpsBot::Context.utils.build.s3_key

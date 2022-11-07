@@ -1,5 +1,5 @@
 class OpsBot::Context
-  include OpsBot::Concerns::Renderable
+  include OpsBot::Concern::Renderable
 
   class << self
     attr_reader :env, :secrets, :utils

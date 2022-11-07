@@ -1,4 +1,4 @@
-class OpsBot::AWS::IAM
+class OpsBot::Integration::AWS::IAM
   MAX_RETRIES = 5.freeze
 
   def initialize

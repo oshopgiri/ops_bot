@@ -1,4 +1,4 @@
-class OpsBot::GitHub
+class OpsBot::Integration::GitHub
   def initialize(repository:)
     @repository = repository
   end

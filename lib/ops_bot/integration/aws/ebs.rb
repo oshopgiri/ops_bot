@@ -1,4 +1,4 @@
-class OpsBot::AWS::EBS
+class OpsBot::Integration::AWS::EBS
   def initialize
     @application_name = OpsBot::Context.env.aws.ebs.application.name
     @environment_name = OpsBot::Context.env.aws.ebs.application.environment.name
