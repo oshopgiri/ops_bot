@@ -1,11 +1,4 @@
-require 'pathname'
-boot_script = File.join(
-  Pathname.new('/').relative_path_from(Pathname.new("/#{File.dirname(__FILE__)}")),
-  'config/boot.rb'
-)
-require_relative boot_script
-
-class RotateKeysIAMGitHubAction
+class OpsBot::Job::KeyRotation::IAMGitHubAction
   def self.perform
     iam_client = OpsBot::Integration::AWS::IAM.new
 
@@ -29,7 +22,7 @@ class RotateKeysIAMGitHubAction
     ensure
       slack_client = OpsBot::Notification::Slack.new
       slack_client.notify(
-        template: 'rotate_keys-iam_github_action.json.erb',
+        template: 'key_rotation-iam_github_action.json.erb',
         payload: {
           new_access_key: new_access_key
         }
@@ -39,5 +32,3 @@ class RotateKeysIAMGitHubAction
     new_access_key.present? ? 0 : 1
   end
 end
-
-exit(RotateKeysIAMGitHubAction.perform)

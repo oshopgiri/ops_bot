@@ -1,4 +1,4 @@
-name: rotate_keys
+name: key_rotation
 
 on:
   workflow_call:
@@ -48,4 +48,4 @@ jobs:
         with:
           bundler-cache: true
       - name: Rotating keys
-        run: ruby ./bin/rotate_keys/iam_github_action.rb
+        run: ruby ./bin/key_rotation/iam_github_action.rb
