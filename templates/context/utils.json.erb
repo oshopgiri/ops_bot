@@ -4,7 +4,15 @@
       "application": {
         "url": "<%= "https://#{OpsBot::Context.secrets.aws.region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{OpsBot::Context.secrets.aws.region}#/application/overview?applicationName=#{OpsBot::Context.env.aws.ebs.application.name}" %>",
         "environment": {
-          "url": "<%=  %>"
+          "url": "<%=
+          begin
+            ebs_client = DeployActions::AWS::EBS.new
+            environment_details = ebs_client.describe_environment
+            "https://#{OpsBot::Context.secrets.aws.region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{OpsBot::Context.secrets.aws.region}#/environment/dashboard?applicationName=#{OpsBot::Context.env.aws.ebs.application.name}&environmentId=#{environment_details.environment_id}"
+          rescue
+            "https://#{OpsBot::Context.secrets.aws.region}.console.aws.amazon.com/elasticbeanstalk/home?region=#{OpsBot::Context.secrets.aws.region}#/application/overview?applicationName=#{OpsBot::Context.env.aws.ebs.application.name}"
+          end
+        %>"
         }
       }
     },
