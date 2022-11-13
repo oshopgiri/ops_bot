@@ -5,4 +5,4 @@ boot_script = File.join(
 )
 require_relative boot_script
 
-exit(OpsBot::Job::KeyRotation::IAMGitHubAction.perform)
+exit(OpsBot::Job::KeyRotation::IAMGitHubAction.execute)

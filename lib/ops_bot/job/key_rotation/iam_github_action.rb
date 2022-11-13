@@ -1,4 +1,4 @@
-class OpsBot::Job::KeyRotation::IAMGitHubAction
+class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
   def self.perform
     iam_client = OpsBot::Integration::AWS::IAM.new
 
@@ -29,6 +29,6 @@ class OpsBot::Job::KeyRotation::IAMGitHubAction
       )
     end
 
-    new_access_key.present? ? 0 : 1
+    new_access_key.present?
   end
 end

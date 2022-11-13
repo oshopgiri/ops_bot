@@ -1,4 +1,4 @@
-class OpsBot::Job::AWS::EBS::Deploy
+class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
   def self.perform
     ebs_client = OpsBot::Integration::AWS::EBS.new
     ebs_version_label = OpsBot::Context.utils.build.version
@@ -13,7 +13,7 @@ class OpsBot::Job::AWS::EBS::Deploy
         puts "Created new EBS application version: #{ebs_version_label}"
       else
         puts 'Version creation failed. Check logs for errors.'
-        return 1
+        return false
       end
     end
 
@@ -25,6 +25,6 @@ class OpsBot::Job::AWS::EBS::Deploy
       slack_client.notify(template: 'aws-ebs-deploy.json.erb')
     end
 
-    0
+    true
   end
 end

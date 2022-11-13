@@ -1,4 +1,4 @@
-class OpsBot::Job::Build
+class OpsBot::Job::Build < OpsBot::Job::Base
   def self.perform
     s3_build_url = "s3://#{OpsBot::Context.env.aws.s3.bucket_name}/#{OpsBot::Context.utils.build.s3_key}"
     s3_client = OpsBot::Integration::AWS::S3.new
@@ -13,7 +13,7 @@ class OpsBot::Job::Build
 
       unless build_client.build_exists?
         puts 'Build failed. Check logs for errors.'
-        return 1
+        return false
       end
 
       puts 'Uploading build to S3...'
@@ -23,10 +23,10 @@ class OpsBot::Job::Build
         puts "Uploaded build to S3: #{s3_build_url}"
       else
         puts 'Uploading build failed. Check logs for errors.'
-        return 1
+        return false
       end
     end
 
-    0
+    true
   end
 end
