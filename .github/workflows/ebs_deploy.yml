@@ -18,6 +18,9 @@ on:
       deploy_environment:
         required: false
         type: string
+      jdk_version:
+        required: false
+        type: string
       slack_channel_ids:
         required: false
         type: string
@@ -41,6 +44,7 @@ env:
   BUILD_DIRECTORY: ./target
   BUILD_TYPE: ${{ inputs.build_type }}
   DEPLOY_ENVIRONMENT: ${{ inputs.deploy_environment }}
+  JDK_VERSION: ${{ inputs.jdk_version || 8 }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
   SOURCE_DIRECTORY: ./app
@@ -76,7 +80,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 8
+          java-version: ${{ env.JDK_VERSION }}
       - name: Making hooks executable
         run: |
           for script in $(find $SOURCE_HOOKS_DIRECTORY -name '*.sh');
