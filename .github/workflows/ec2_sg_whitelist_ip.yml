@@ -33,7 +33,7 @@ env:
 
 jobs:
   whitelist_ip:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Logging run context
         run: |
