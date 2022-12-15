@@ -35,7 +35,7 @@ GEM
     concurrent-ruby (1.1.10)
     diff-lcs (1.5.0)
     dotenv (2.8.1)
-    faraday (2.5.2)
+    faraday (2.7.1)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-mashify (0.1.1)
@@ -43,7 +43,7 @@ GEM
       hashie
     faraday-multipart (1.0.4)
       multipart-post (~> 2)
-    faraday-net_http (3.0.0)
+    faraday-net_http (3.0.2)
     gli (2.21.0)
     hashie (5.0.0)
     i18n (1.12.0)
@@ -77,7 +77,7 @@ GEM
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
     ruby2_keywords (0.0.5)
-    slack-ruby-client (1.1.0)
+    slack-ruby-client (2.0.0)
       faraday (>= 2.0)
       faraday-mashify
       faraday-multipart
