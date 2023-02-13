@@ -1,4 +1,4 @@
-name: key_rotation
+name: [KeyRotation] IAM <-> GitHub Action
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: aws_ebs
+name: [AWS EBS] Fetch Logs
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: aws_ebs
+name: [AWS EBS] Update Instance Type
 
 on:
   workflow_call:
