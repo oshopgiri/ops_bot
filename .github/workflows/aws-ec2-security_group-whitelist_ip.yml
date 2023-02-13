@@ -1,4 +1,4 @@
-name: [AWS EC2 SecurityGroup] Whitelist IP
+name: (AWS EC2 SecurityGroup) Whitelist IP
 
 on:
   workflow_call:
