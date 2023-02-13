@@ -15,9 +15,6 @@ on:
       build_type:
         required: true
         type: string
-      deploy_environment:
-        required: false
-        type: string
       jdk_version:
         required: false
         type: string
@@ -46,7 +43,6 @@ env:
   AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
   BUILD_DIRECTORY: ./target
   BUILD_TYPE: ${{ inputs.build_type }}
-  DEPLOY_ENVIRONMENT: ${{ inputs.deploy_environment }}
   JDK_VERSION: ${{ inputs.jdk_version || 8 }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
