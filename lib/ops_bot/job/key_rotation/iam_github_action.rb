@@ -5,14 +5,15 @@ class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
     begin
       new_access_key = iam_client.rotate_access_key
 
-      OpsBot::Context.env.access_key.serviced_repos.split(';').map(&:strip).each do |repo|
-        github_client = OpsBot::Integration::GitHub.new(repo: repo)
+      OpsBot::Context.env.access_key.serviced_repos.each do |repo|
+        github_client = OpsBot::Integration::GitHub.new(repository: repo)
+
         {
           'AWS_ACCESS_KEY_ID': new_access_key.access_key_id,
           'AWS_SECRET_ACCESS_KEY': new_access_key.secret_access_key
         }.each do |name, value|
           github_client.set_action_secret(
-            name: name.to_s,
+            name: name,
             value: value
           )
         end

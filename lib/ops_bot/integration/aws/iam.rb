@@ -3,7 +3,7 @@ class OpsBot::Integration::AWS::IAM
 
   def initialize
     @access_key_id = OpsBot::Context.secrets.aws.access_key_id
-    @user_name = OpsBot::Context.secrets.iam.user_name
+    @user_name = OpsBot::Context.secrets.aws.iam.user_name
   end
 
   def deactivate_access_key

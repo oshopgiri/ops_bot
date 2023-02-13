@@ -1,4 +1,6 @@
 class OpsBot::Integration::GitHub
+  attr_reader :repository
+
   def initialize(repository:)
     @repository = repository
   end

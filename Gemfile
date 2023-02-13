@@ -18,6 +18,6 @@ group :test do
 end
 
 group :development, :test do
+  gem 'debug', require: 'debug'
   gem 'dotenv'
-  gem 'pry'
 end
