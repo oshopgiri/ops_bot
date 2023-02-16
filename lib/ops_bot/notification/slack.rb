@@ -23,6 +23,8 @@ class OpsBot::Notification::Slack < OpsBot::Notification::Base
         payload: payload
       )
     )
+
+    puts 'Notification sent...'
   end
 
   private
