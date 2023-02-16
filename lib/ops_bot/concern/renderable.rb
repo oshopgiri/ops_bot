@@ -23,6 +23,7 @@ module OpsBot::Concern::Renderable
 
         puts 'render_context'
         puts @render_context
+        @render_context
       end
   end
 end
