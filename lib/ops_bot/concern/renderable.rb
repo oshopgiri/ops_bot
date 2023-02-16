@@ -16,6 +16,10 @@ module OpsBot::Concern::Renderable
       end
 
       def render_context
+        puts 'pre render_context'
+        puts self.name.dup
+        puts self.name.dup.split('::')[1..].join('::').underscore
+
         @render_context ||= begin
           class_name = self.name.dup
           class_name.split('::')[1..].join('::').underscore
