@@ -22,6 +22,7 @@ class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
       new_access_key = nil
     ensure
       puts 'Sending slack notification...'
+      puts new_access_key.to_s
       slack_client = OpsBot::Notification::Slack.new
       slack_client.notify(
         template: 'key_rotation-iam_github_action.json.erb',

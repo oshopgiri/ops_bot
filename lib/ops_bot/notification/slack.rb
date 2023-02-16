@@ -1,6 +1,7 @@
 class OpsBot::Notification::Slack < OpsBot::Notification::Base
   def initialize
     @channel_ids = begin
+      puts 'Initializing Slack client...'
       client.auth_test
       OpsBot::Context.env.slack.channel_ids
     rescue
@@ -10,7 +11,9 @@ class OpsBot::Notification::Slack < OpsBot::Notification::Base
   end
 
   def notify(template:, payload: {})
+    puts 'Sending notification...'
     return if @channel_ids.blank?
+    puts @channel_ids
 
     client.chat_postMessage(
       channel: @channel_ids,
