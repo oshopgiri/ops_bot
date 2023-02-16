@@ -15,6 +15,12 @@ class OpsBot::Notification::Slack < OpsBot::Notification::Base
     return if @channel_ids.blank?
     puts @channel_ids
 
+    puts render(
+      view_file: template,
+      instance: self,
+      payload: payload
+    )
+
     client.chat_postMessage(
       channel: @channel_ids,
       blocks: render(
