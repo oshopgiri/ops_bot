@@ -9,7 +9,6 @@ module OpsBot::Concern::Renderable
     private
 
       def render(view_file:, context: render_context, instance: Object.new, payload: {})
-        puts render_context
         render = Tilt.new("./templates/#{context}/#{view_file}").render(instance, payload)
         puts 'render'
         puts render
@@ -21,6 +20,9 @@ module OpsBot::Concern::Renderable
           class_name = self.name.dup
           class_name.split('::')[1..].join('::').underscore
         end
+
+        puts 'render_context'
+        puts @render_context
       end
   end
 end
