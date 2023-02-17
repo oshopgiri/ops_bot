@@ -6,7 +6,7 @@ module OpsBot::Concern::Renderable
   end
 
   class_methods do
-    private
+    protected
 
       def render(view_file:, context: render_context, instance: Object.new, payload: {})
         render = Tilt.new("./templates/#{context}/#{view_file}").render(instance, payload)
