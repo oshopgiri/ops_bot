@@ -6,7 +6,6 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
     if ebs_client.version_exists?
       puts "Existing application version found on EBS: #{ebs_version_label}, skipping version creation..."
     else
-      puts 'Creating new EBS application version...'
       ebs_client.create_version
 
       if ebs_client.version_exists?
@@ -17,7 +16,6 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
       end
     end
 
-    puts 'Deploying...'
     ebs_client.deploy_version
 
     if OpsBot::Context.utils.workflow.is_production?

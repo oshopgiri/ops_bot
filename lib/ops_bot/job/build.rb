@@ -8,7 +8,6 @@ class OpsBot::Job::Build < OpsBot::Job::Base
     else
       build_client = OpsBot::Build.new
 
-      puts 'Building...'
       build_client.package
 
       unless build_client.build_exists?
@@ -16,7 +15,6 @@ class OpsBot::Job::Build < OpsBot::Job::Base
         return false
       end
 
-      puts 'Uploading build to S3...'
       s3_client.upload_build
 
       if s3_client.build_exists?

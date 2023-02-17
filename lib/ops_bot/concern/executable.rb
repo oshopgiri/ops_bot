@@ -4,8 +4,6 @@ module OpsBot::Concern::Executable
   class_methods do
     def execute
       result = perform
-      puts 'result from perform'
-      puts result
       result ? 0 : 1
     rescue => exception
       puts exception
