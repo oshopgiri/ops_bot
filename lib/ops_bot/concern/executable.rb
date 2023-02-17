@@ -7,7 +7,8 @@ module OpsBot::Concern::Executable
       puts 'result from perform'
       puts result
       result ? 0 : 1
-    rescue
+    rescue => exception
+      puts exception
       1
     end
   end
