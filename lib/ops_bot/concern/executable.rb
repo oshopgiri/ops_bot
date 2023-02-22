@@ -6,7 +6,7 @@ module OpsBot::Concern::Executable
       result = perform
       result ? 0 : 1
     rescue => exception
-      puts exception
+      $logger.error(exception)
       1
     end
   end

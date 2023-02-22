@@ -4,14 +4,14 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
     ebs_version_label = OpsBot::Context.utils.build.version
 
     if ebs_client.version_exists?
-      puts "Existing application version found on EBS: #{ebs_version_label}, skipping version creation..."
+      $logger.info("Existing application version found on EBS: #{ebs_version_label}, skipping version creation...")
     else
       ebs_client.create_version
 
       if ebs_client.version_exists?
-        puts "Created new EBS application version: #{ebs_version_label}"
+        $logger.info("Created new EBS application version: #{ebs_version_label}")
       else
-        puts 'Version creation failed. Check logs for errors.'
+        $logger.error('Version creation failed. Check logs for errors.')
         return false
       end
     end

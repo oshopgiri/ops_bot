@@ -1,18 +1,13 @@
-ENV['WORKFLOW_ENVIRONMENT'] = 'test'
+ENV['APP_ENV'] = 'test'
 
 require_relative '../config/boot.rb'
 
 RSpec.configure do |config|
-  original_stderr = $stderr
-  original_stdout = $stdout
-
   config.before(:all) do
-    $stderr = File.open(File::NULL, "w")
-    $stdout = File.open(File::NULL, "w")
+    $logger.level = Logger::ERROR
   end
   
   config.after(:all) do
-    $stderr = original_stderr
-    $stdout = original_stdout
+    $logger.level = Logger::DEBUG
   end
 end

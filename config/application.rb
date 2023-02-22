@@ -14,7 +14,7 @@ class Application
 
   def self.groups
     @groups ||= [
-      ENV['WORKFLOW_ENVIRONMENT']&.split(',')&.map(&:to_sym)
+      ENV['APP_ENV']&.split(',')&.map(&:to_sym)
     ].flatten.compact.keep_if { |env| ENVIRONMENTS.include? env }
   end
 end
