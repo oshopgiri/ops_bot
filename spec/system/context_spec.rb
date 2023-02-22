@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe OpsBot::Context, type: :system do
-  let(:klass) { described_class }
-
   describe '#build' do
     %i[env secrets utils].each do |context|
       it "loads #{context} and is accessible" do
