@@ -4,7 +4,7 @@ require_relative '../config/boot.rb'
 
 RSpec.configure do |config|
   config.before(:all) do
-    $logger.level = Logger::ERROR
+    $logger.level = Logger::FATAL
   end
   
   config.after(:all) do
