@@ -3,25 +3,7 @@ name: (AWS EBS) Deploy
 on:
   workflow_call:
     inputs:
-      aws_ebs_application_name:
-        required: true
-        type: string
-      aws_ebs_environment_name:
-        required: true
-        type: string
-      aws_s3_bucket_name:
-        required: true
-        type: string
-      build_type:
-        required: true
-        type: string
-      jdk_version:
-        required: false
-        type: string
-      slack_channel_ids:
-        required: false
-        type: string
-      workflow_environment:
+      environment:
         required: true
         type: string
     secrets:
@@ -49,67 +31,60 @@ env:
   SLACK_CHANNEL_IDS: ${{ vars.SLACK_CHANNEL_IDS }}
   SOURCE_DIRECTORY: ./app
   SOURCE_HOOKS_SUBDIRECTORY: ./.github/hooks
-  WORKFLOW_ENVIRONMENT: ${{ inputs.workflow_environment }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
 jobs:
   deploy:
     environment:
-      name: ${{ inputs.workflow_environment }}
+      name: ${{ inputs.environment }}
       url: ${{ vars.URL }}
     runs-on: ubuntu-20.04
     steps:
       - name: Logging run context
         run: |
-            echo ${{ env.AWS_EBS_APPLICATION_NAME }}
-            echo ${{ env.AWS_EBS_ENVIRONMENT_NAME }}
-            echo ${{ env.SLACK_CHANNEL_IDS }}
-            echo ${{ vars.URL }}
-            echo ${{ env.BUILD_TYPE }}
-            echo ${{ secrets.TEST }}
-            echo ${{ secrets.TEST_ENV }}
-      #     echo "user: ${{ github.actor }},
-      #     deploying branch: ${{ github.ref }},
-      #     to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
-      # - name: Checking-out remote scripts
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: oshopgiri/deploy_actions
-      #     ref: refractoring_v3
-      #     path: ./
-      # - name: Setting-up Ruby
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     bundler-cache: true
-      # - name: Checking-out current branch
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: ${{ github.repository }}
-      #     ref: ${{ github.ref }}
-      #     path: ${{ env.SOURCE_DIRECTORY }}
-      # - name: Setting-up JDK
-      #   if: env.BUILD_TYPE == 'war'
-      #   uses: actions/setup-java@v3
-      #   with:
-      #     distribution: temurin
-      #     java-version: ${{ env.JDK_VERSION }}
-      # - name: Making hooks executable
-      #   run: |
-      #     for script in $(find $SOURCE_HOOKS_SUBDIRECTORY -name '*.sh');
-      #     do
-      #       chmod +x $script
-      #     done
-      #   working-directory: ${{ env.SOURCE_DIRECTORY }}
-      # - name: Running pre-build hook
-      #   run: |
-      #     if test -f "$SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh"; then
-      #       $SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh $WORKFLOW_ENVIRONMENT
-      #     fi
-      #   working-directory: ${{ env.SOURCE_DIRECTORY }}
-      # - name: Building
-      #   run: |
-      #     mkdir -p $BUILD_DIRECTORY
-      #     ruby ./bin/build.rb
-      # - name: Triggering deploy
-      #   if: success()
-      #   run: |
-      #     ruby ./bin/aws/ebs/deploy.rb
+          echo "user: ${{ github.actor }},
+          deploying branch: ${{ github.ref }},
+          to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/deploy_actions
+          ref: refractoring_v3
+          path: ./
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Checking-out current branch
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          path: ${{ env.SOURCE_DIRECTORY }}
+      - name: Setting-up JDK
+        if: env.BUILD_TYPE == 'war'
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: ${{ env.JDK_VERSION }}
+      - name: Making hooks executable
+        run: |
+          for script in $(find $SOURCE_HOOKS_SUBDIRECTORY -name '*.sh');
+          do
+            chmod +x $script
+          done
+        working-directory: ${{ env.SOURCE_DIRECTORY }}
+      - name: Running pre-build hook
+        run: |
+          if test -f "$SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh"; then
+            $SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh $WORKFLOW_ENVIRONMENT
+          fi
+        working-directory: ${{ env.SOURCE_DIRECTORY }}
+      - name: Building
+        run: |
+          mkdir -p $BUILD_DIRECTORY
+          ruby ./bin/build.rb
+      - name: Triggering deploy
+        if: success()
+        run: |
+          ruby ./bin/aws/ebs/deploy.rb
