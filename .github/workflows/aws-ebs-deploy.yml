@@ -53,6 +53,7 @@ env:
 
 jobs:
   deploy:
+    environment: ${{ inputs.workflow_environment }}
     runs-on: ubuntu-20.04
     steps:
       - name: Logging run context
