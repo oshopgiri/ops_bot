@@ -60,9 +60,11 @@ jobs:
     steps:
       - name: Logging run context
         run: |
+            echo ${{ vars.AWS_EBS_APPLICATION_NAME }}
             echo ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
             echo ${{ vars.SLACK_CHANNEL_IDS }}
             echo ${{ vars.URL }}
+            echo ${{ vars.BUILD_TYPE }}
       #     echo "user: ${{ github.actor }},
       #     deploying branch: ${{ github.ref }},
       #     to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
