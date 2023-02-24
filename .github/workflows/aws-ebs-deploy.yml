@@ -58,49 +58,50 @@ jobs:
     steps:
       - name: Logging run context
         run: |
-          echo "user: ${{ github.actor }},
-          deploying branch: ${{ github.ref }},
-          to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
-      - name: Checking-out remote scripts
-        uses: actions/checkout@v3
-        with:
-          repository: oshopgiri/deploy_actions
-          ref: refractoring_v3
-          path: ./
-      - name: Setting-up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Checking-out current branch
-        uses: actions/checkout@v3
-        with:
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref }}
-          path: ${{ env.SOURCE_DIRECTORY }}
-      - name: Setting-up JDK
-        if: env.BUILD_TYPE == 'war'
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: ${{ env.JDK_VERSION }}
-      - name: Making hooks executable
-        run: |
-          for script in $(find $SOURCE_HOOKS_SUBDIRECTORY -name '*.sh');
-          do
-            chmod +x $script
-          done
-        working-directory: ${{ env.SOURCE_DIRECTORY }}
-      - name: Running pre-build hook
-        run: |
-          if test -f "$SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh"; then
-            $SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh $WORKFLOW_ENVIRONMENT
-          fi
-        working-directory: ${{ env.SOURCE_DIRECTORY }}
-      - name: Building
-        run: |
-          mkdir -p $BUILD_DIRECTORY
-          ruby ./bin/build.rb
-      - name: Triggering deploy
-        if: success()
-        run: |
-          ruby ./bin/aws/ebs/deploy.rb
+            echo ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
+      #     echo "user: ${{ github.actor }},
+      #     deploying branch: ${{ github.ref }},
+      #     to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
+      # - name: Checking-out remote scripts
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: oshopgiri/deploy_actions
+      #     ref: refractoring_v3
+      #     path: ./
+      # - name: Setting-up Ruby
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     bundler-cache: true
+      # - name: Checking-out current branch
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: ${{ github.repository }}
+      #     ref: ${{ github.ref }}
+      #     path: ${{ env.SOURCE_DIRECTORY }}
+      # - name: Setting-up JDK
+      #   if: env.BUILD_TYPE == 'war'
+      #   uses: actions/setup-java@v3
+      #   with:
+      #     distribution: temurin
+      #     java-version: ${{ env.JDK_VERSION }}
+      # - name: Making hooks executable
+      #   run: |
+      #     for script in $(find $SOURCE_HOOKS_SUBDIRECTORY -name '*.sh');
+      #     do
+      #       chmod +x $script
+      #     done
+      #   working-directory: ${{ env.SOURCE_DIRECTORY }}
+      # - name: Running pre-build hook
+      #   run: |
+      #     if test -f "$SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh"; then
+      #       $SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh $WORKFLOW_ENVIRONMENT
+      #     fi
+      #   working-directory: ${{ env.SOURCE_DIRECTORY }}
+      # - name: Building
+      #   run: |
+      #     mkdir -p $BUILD_DIRECTORY
+      #     ruby ./bin/build.rb
+      # - name: Triggering deploy
+      #   if: success()
+      #   run: |
+      #     ruby ./bin/aws/ebs/deploy.rb
