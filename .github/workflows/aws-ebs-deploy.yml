@@ -39,14 +39,14 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_EBS_APPLICATION_NAME: ${{ inputs.aws_ebs_application_name }}
-  AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
-  AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
+  AWS_EBS_APPLICATION_NAME: ${{ vars.AWS_EBS_APPLICATION_NAME }}
+  AWS_EBS_ENVIRONMENT_NAME: ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
+  AWS_S3_BUCKET_NAME: ${{ vars.AWS_S3_BUCKET_NAME }}
   BUILD_DIRECTORY: ./target
-  BUILD_TYPE: ${{ inputs.build_type }}
-  JDK_VERSION: ${{ inputs.jdk_version || 8 }}
+  BUILD_TYPE: ${{ vars.BUILD_TYPE }}
+  JDK_VERSION: ${{ vars.JDK_VERSION || 8 }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-  SLACK_CHANNEL_IDS: ${{ inputs.slack_channel_ids }}
+  SLACK_CHANNEL_IDS: ${{ vars.SLACK_CHANNEL_IDS }}
   SOURCE_DIRECTORY: ./app
   SOURCE_HOOKS_SUBDIRECTORY: ./.github/hooks
   WORKFLOW_ENVIRONMENT: ${{ inputs.workflow_environment }}
@@ -60,11 +60,11 @@ jobs:
     steps:
       - name: Logging run context
         run: |
-            echo ${{ vars.AWS_EBS_APPLICATION_NAME }}
-            echo ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
-            echo ${{ vars.SLACK_CHANNEL_IDS }}
+            echo ${{ env.AWS_EBS_APPLICATION_NAME }}
+            echo ${{ env.AWS_EBS_ENVIRONMENT_NAME }}
+            echo ${{ env.SLACK_CHANNEL_IDS }}
             echo ${{ vars.URL }}
-            echo ${{ vars.BUILD_TYPE }}
+            echo ${{ env.BUILD_TYPE }}
       #     echo "user: ${{ github.actor }},
       #     deploying branch: ${{ github.ref }},
       #     to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
