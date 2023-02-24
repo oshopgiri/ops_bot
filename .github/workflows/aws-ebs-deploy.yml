@@ -65,6 +65,8 @@ jobs:
             echo ${{ env.SLACK_CHANNEL_IDS }}
             echo ${{ vars.URL }}
             echo ${{ env.BUILD_TYPE }}
+            echo ${{ secrets.TEST }}
+            echo ${{ secrets.TEST_ENV }}
       #     echo "user: ${{ github.actor }},
       #     deploying branch: ${{ github.ref }},
       #     to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
