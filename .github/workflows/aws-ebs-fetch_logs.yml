@@ -3,7 +3,7 @@ name: (AWS EBS) Fetch Logs
 on:
   workflow_call:
     inputs:
-      aws_ebs_environment_name:
+      environment:
         required: true
         type: string
     secrets:
@@ -19,11 +19,13 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_EBS_ENVIRONMENT_NAME: ${{ inputs.aws_ebs_environment_name }}
-  LOG_FILE_PATH: ./${{ inputs.aws_ebs_environment_name }}_logs.zip
+  AWS_EBS_ENVIRONMENT_NAME: ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
+  LOG_FILE_PATH: ./${{ vars.AWS_EBS_ENVIRONMENT_NAME }}_logs.zip
 
 jobs:
   fetch_logs:
+    environment:
+      name: ${{ inputs.environment }}
     runs-on: ubuntu-20.04
     steps:
       - name: Logging run context

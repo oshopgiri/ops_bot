@@ -3,6 +3,9 @@ name: (AWS EC2 SecurityGroup) Whitelist IP
 on:
   workflow_call:
     inputs:
+      environment:
+        required: true
+        type: string
       ip_address:
         required: true
         type: string
@@ -34,6 +37,8 @@ env:
 
 jobs:
   whitelist_ip:
+    environment:
+      name: ${{ inputs.environment }}
     runs-on: ubuntu-20.04
     steps:
       - name: Logging run context

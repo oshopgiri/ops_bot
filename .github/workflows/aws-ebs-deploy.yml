@@ -14,7 +14,7 @@ on:
       AWS_REGION:
         required: true
       SLACK_BOT_TOKEN:
-        required: false
+        required: true
 
 env:
   APP_ENV: production
