@@ -33,7 +33,7 @@
           "text": "branch: <%= OpsBot::Context.env.github.branch.ref %>",
           "emoji": true
         },
-        "url": "<%= OpsBot::Context.utils.github.branch.ref_url %>"
+        "url": "<%= OpsBot::Context.utils.github.action.branch.ref_url %>"
       }, {
         "type": "button",
         "text": {
@@ -41,7 +41,7 @@
           "text": "ref: <%= OpsBot::Context.env.github.branch.sha %>",
           "emoji": true
         },
-        "url": "<%= OpsBot::Context.utils.github.branch.sha_url %>"
+        "url": "<%= OpsBot::Context.utils.github.action.branch.sha_url %>"
       }
     ]
   }
