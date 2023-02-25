@@ -38,6 +38,7 @@ jobs:
     environment:
       name: ${{ inputs.environment }}
       url: ${{ vars.URL }}
+    name: ${{ inputs.environment }}
     runs-on: ubuntu-20.04
     steps:
       - name: Logging run context
