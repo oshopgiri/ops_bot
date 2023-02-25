@@ -18,10 +18,8 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
 
     ebs_client.deploy_version
 
-    if OpsBot::Context.utils.workflow.is_production?
-      slack_client = OpsBot::Notification::Slack.new
-      slack_client.notify(template: 'aws-ebs-deploy.json.erb')
-    end
+    slack_client = OpsBot::Notification::Slack.new
+    slack_client.notify(template: 'aws-ebs-deploy.json.erb')
 
     true
   end
