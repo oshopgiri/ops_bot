@@ -43,6 +43,8 @@ class OpsBot::Integration::AWS::EBS
       info_type: 'bundle'
     })
 
+    $logger.info(response)
+
     if response.environment_info
       download_logs(url: response.environment_info.first.message)
       true
