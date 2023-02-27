@@ -39,6 +39,7 @@ jobs:
   whitelist_ip:
     environment:
       name: ${{ inputs.environment }}
+    name: ${{ inputs.environment }}
     runs-on: ubuntu-20.04
     steps:
       - name: Logging run context
