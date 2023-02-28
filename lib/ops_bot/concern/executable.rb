@@ -6,8 +6,7 @@ module OpsBot::Concern::Executable
       result = perform
       result ? 0 : 1
     rescue => exception
-      $logger.error(exception)
-      Sentry.capture_exception(exception) if Sentry.initialized?
+      OpsBot::Integration::Sentry.capture_exception(exception)
       1
     end
   end
