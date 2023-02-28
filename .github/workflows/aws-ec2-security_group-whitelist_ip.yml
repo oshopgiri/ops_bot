@@ -34,6 +34,7 @@ env:
   AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS: ${{ inputs.ip_address }}
   AWS_EC2_SECURITY_GROUP_RULE_PORT: ${{ inputs.port }}
   AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL: ${{ inputs.protocol }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
 jobs:
   whitelist_ip:

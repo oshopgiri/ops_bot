@@ -21,6 +21,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_EBS_ENVIRONMENT_NAME: ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
   LOG_FILE_PATH: ./${{ vars.AWS_EBS_ENVIRONMENT_NAME }}_logs.zip
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
 jobs:
   fetch_logs:

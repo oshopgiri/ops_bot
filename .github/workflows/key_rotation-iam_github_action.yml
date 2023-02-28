@@ -30,6 +30,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ vars.SLACK_CHANNEL_IDS }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
 jobs:
   iam_github_action:
