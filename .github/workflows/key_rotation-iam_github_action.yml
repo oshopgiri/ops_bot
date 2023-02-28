@@ -17,8 +17,10 @@ on:
         required: true
       GH_ACCESS_TOKEN:
         required: true
+      SENTRY_DSN:
+        required: false
       SLACK_BOT_TOKEN:
-        required: true
+        required: false
 
 env:
   APP_ENV: production
@@ -30,6 +32,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ vars.SLACK_CHANNEL_IDS }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
 jobs:

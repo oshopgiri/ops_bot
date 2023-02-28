@@ -80,6 +80,8 @@ GEM
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
     ruby2_keywords (0.0.5)
+    sentry-ruby (5.8.0)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
     slack-ruby-client (2.0.0)
       faraday (>= 2.0)
       faraday-mashify
@@ -110,6 +112,7 @@ DEPENDENCIES
   nokogiri
   pathname
   rspec
+  sentry-ruby
   slack-ruby-client
   tilt
   zeitwerk

@@ -13,8 +13,10 @@ on:
         required: true
       AWS_REGION:
         required: true
+      SENTRY_DSN:
+        required: false
       SLACK_BOT_TOKEN:
-        required: true
+        required: false
 
 env:
   APP_ENV: production
@@ -27,6 +29,7 @@ env:
   BUILD_DIRECTORY: ./target
   BUILD_TYPE: ${{ vars.BUILD_TYPE }}
   JDK_VERSION: ${{ vars.JDK_VERSION || 8 }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
   SLACK_CHANNEL_IDS: ${{ vars.SLACK_CHANNEL_IDS }}
   SOURCE_DIRECTORY: ./app

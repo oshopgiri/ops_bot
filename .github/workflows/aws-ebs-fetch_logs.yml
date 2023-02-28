@@ -13,6 +13,8 @@ on:
         required: true
       AWS_REGION:
         required: true
+      SENTRY_DSN:
+        required: false
 
 env:
   APP_ENV: production
@@ -21,6 +23,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_EBS_ENVIRONMENT_NAME: ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
   LOG_FILE_PATH: ./${{ vars.AWS_EBS_ENVIRONMENT_NAME }}_logs.zip
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
 jobs:

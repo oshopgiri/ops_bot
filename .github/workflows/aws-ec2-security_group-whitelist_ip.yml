@@ -24,6 +24,8 @@ on:
         required: true
       AWS_EC2_SECURITY_GROUP_ID:
         required: true
+      SENTRY_DSN:
+        required: false
 
 env:
   APP_ENV: production
@@ -34,6 +36,7 @@ env:
   AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS: ${{ inputs.ip_address }}
   AWS_EC2_SECURITY_GROUP_RULE_PORT: ${{ inputs.port }}
   AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL: ${{ inputs.protocol }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
 jobs:
