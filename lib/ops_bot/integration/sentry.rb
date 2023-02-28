@@ -2,11 +2,16 @@ class OpsBot::Integration::Sentry
   def self.initialize
     return unless Sentry.initialized?
 
-    Sentry.set_tags('aws.ebs.application': OpsBot::Context.env.aws.ebs.application.name)
-    Sentry.set_tags('aws.ebs.environment': OpsBot::Context.env.aws.ebs.application.environment.name)
-    Sentry.set_tags('github.branch': OpsBot::Context.env.github.branch.ref)
-    Sentry.set_tags('github.branch.commit_sha': OpsBot::Context.env.github.branch.sha)
-    Sentry.set_tags('github.repository': OpsBot::Context.env.github.repository.name)
+    # AWS tags
+    aws_application_context = OpsBot::Context.env.aws.ebs.application
+    Sentry.set_tags('aws.application': aws_application_context.name) if aws_application_context.name.present?
+    Sentry.set_tags('aws.environment': aws_application_context.environment.name) if aws_application_context.environment.name.present?
+
+    # GitHub tags
+    github_context = OpsBot::Context.env.github
+    Sentry.set_tags('github.branch': github_context.branch.ref)
+    Sentry.set_tags('github.commit': github_context.branch.sha)
+    Sentry.set_tags('github.repository': github_context.repository.name)
     Sentry.set_tags('github.action.run_url': OpsBot::Context.utils.github.action.run.url)
   end
 
