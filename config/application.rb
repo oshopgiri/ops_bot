@@ -1,7 +1,20 @@
 class Application
   ENVIRONMENTS = %i[development test production].freeze
+  INFLECTIONS = {
+    'aws'    => 'AWS',
+    'ebs'    => 'EBS',
+    'ec2'    => 'EC2',
+    'github' => 'GitHub',
+    'iam'    => 'IAM',
+    'ip'     => 'IP',
+    's3'     => 'S3',
+    'war'    => 'WAR',
+    'zip'    => 'ZIP'
+  }
 
   def self.groups
-    @@groups ||= [:default, ENV['APP_ENV']&.split(',')&.map(&:to_sym)].flatten.compact.keep_if { |env| ENVIRONMENTS.include? env }
+    @groups ||= [
+      ENV['APP_ENV']&.split(',')&.map(&:to_sym)
+    ].flatten.compact.keep_if { |env| ENVIRONMENTS.include? env }
   end
 end

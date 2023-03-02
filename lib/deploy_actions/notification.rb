@@ -1,2 +1,0 @@
-module DeployActions::Notification
-end

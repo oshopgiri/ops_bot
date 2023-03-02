@@ -1,0 +1,63 @@
+name: (AWS EC2 SecurityGroup) Whitelist IP
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      ip_address:
+        required: true
+        type: string
+      port:
+        required: true
+        type: string
+      protocol:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_EC2_SECURITY_GROUP_ID:
+        required: true
+      SENTRY_DSN:
+        required: false
+
+env:
+  APP_ENV: production
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_EC2_SECURITY_GROUP_ID: ${{ secrets.AWS_EC2_SECURITY_GROUP_ID }}
+  AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS: ${{ inputs.ip_address }}
+  AWS_EC2_SECURITY_GROUP_RULE_PORT: ${{ inputs.port }}
+  AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL: ${{ inputs.protocol }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
+
+jobs:
+  whitelist_ip:
+    environment:
+      name: ${{ inputs.environment }}
+    name: ${{ inputs.environment }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Logging run context
+        run: |
+          echo "user: ${{ github.actor }},
+          opening port: $AWS_EC2_SECURITY_GROUP_RULE_PORT over protocol: $AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL for IP: $AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS"
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/deploy_actions
+          ref: refractoring_v3
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Whitelisting new IP
+        run: ruby ./bin/aws/ec2/security_group/whitelist_ip.rb

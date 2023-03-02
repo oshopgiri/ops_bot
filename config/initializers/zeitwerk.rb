@@ -1,9 +1,11 @@
+class CustomInflector < Zeitwerk::Inflector
+  def camelize(basename, _abspath)
+    overrides[basename] || basename.split('_').map(&:camelize).join
+  end
+end
+
 loader = Zeitwerk::Loader.new
 loader.push_dir('lib')
-loader.inflector.inflect("aws" => "AWS")
-loader.inflector.inflect("ebs" => "EBS")
-loader.inflector.inflect("ec2" => "EC2")
-loader.inflector.inflect("github" => "GitHub")
-loader.inflector.inflect("iam" => "IAM")
-loader.inflector.inflect("s3" => "S3")
+loader.inflector = CustomInflector.new
+Application::INFLECTIONS.each { |k, v| loader.inflector.inflect(k => v) }
 loader.setup

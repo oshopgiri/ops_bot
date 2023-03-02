@@ -1,0 +1,55 @@
+name: (KeyRotation) IAM <-> GitHub Action
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_IAM_USER_NAME:
+        required: true
+      GH_ACCESS_TOKEN:
+        required: true
+      SENTRY_DSN:
+        required: false
+      SLACK_BOT_TOKEN:
+        required: false
+
+env:
+  APP_ENV: production
+  ACCESS_KEY_SERVICED_REPOS: ${{ vars.GH_ACTION_SERVICED_REPOS }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_IAM_USER_NAME: ${{ secrets.AWS_IAM_USER_NAME }}
+  GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  SLACK_CHANNEL_IDS: ${{ vars.SLACK_CHANNEL_IDS }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
+
+jobs:
+  iam_github_action:
+    environment:
+      name: ${{ inputs.environment }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/deploy_actions
+          ref: refractoring_v3
+          path: ./
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Rotating keys
+        run: ruby ./bin/key_rotation/iam_github_action.rb

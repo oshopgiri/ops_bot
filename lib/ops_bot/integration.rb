@@ -1,0 +1,2 @@
+module OpsBot::Integration
+end

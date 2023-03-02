@@ -1,0 +1,94 @@
+name: (AWS EBS) Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      SENTRY_DSN:
+        required: false
+      SLACK_BOT_TOKEN:
+        required: false
+
+env:
+  APP_ENV: production
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_EBS_APPLICATION_NAME: ${{ vars.AWS_EBS_APPLICATION_NAME }}
+  AWS_EBS_ENVIRONMENT_NAME: ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
+  AWS_S3_BUCKET_NAME: ${{ vars.AWS_S3_BUCKET_NAME }}
+  BUILD_DIRECTORY: ./target
+  BUILD_TYPE: ${{ vars.BUILD_TYPE }}
+  JDK_VERSION: ${{ vars.JDK_VERSION || 8 }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  SLACK_CHANNEL_IDS: ${{ vars.SLACK_CHANNEL_IDS }}
+  SOURCE_DIRECTORY: ./app
+  SOURCE_HOOKS_SUBDIRECTORY: ./.github/hooks
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
+
+jobs:
+  deploy:
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ vars.URL }}
+    name: ${{ inputs.environment }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Logging run context
+        run: |
+          echo "user: ${{ github.actor }},
+          deploying branch: ${{ github.ref }},
+          to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/deploy_actions
+          ref: refractoring_v3
+          path: ./
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Checking-out current branch
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          path: ${{ env.SOURCE_DIRECTORY }}
+      - name: Setting-up JDK
+        if: env.BUILD_TYPE == 'war'
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: ${{ env.JDK_VERSION }}
+      - name: Making hooks executable
+        run: |
+          for script in $(find $SOURCE_HOOKS_SUBDIRECTORY -name '*.sh');
+          do
+            chmod +x $script
+          done
+        working-directory: ${{ env.SOURCE_DIRECTORY }}
+      - name: Running pre-build hook
+        run: |
+          if test -f "$SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh"; then
+            $SOURCE_HOOKS_SUBDIRECTORY/pre_build.sh $WORKFLOW_ENVIRONMENT
+          fi
+        working-directory: ${{ env.SOURCE_DIRECTORY }}
+      - name: Building
+        run: |
+          mkdir -p $BUILD_DIRECTORY
+          ruby ./bin/build.rb
+      - name: Triggering deploy
+        if: success()
+        run: |
+          ruby ./bin/aws/ebs/deploy.rb

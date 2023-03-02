@@ -1,0 +1,28 @@
+[
+  {
+    "type": "header",
+    "text": {
+      "type": "plain_text",
+      "text": "Key rotation",
+      "emoji": true
+    }
+  }, {
+    "type": "divider"
+  }, {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "AWS IAM :infinity: GitHub Actions <%= new_access_key.present? ? '' : '\<!channel|channel\>' %>"
+    },
+    "accessory": {
+      "type": "button",
+      "text": {
+        "type": "plain_text",
+        "text": "Logs",
+        "emoji": true
+      },
+      "style": "<%= new_access_key.present? ? 'primary' : 'danger' %>",
+      "url": "<%= OpsBot::Context.utils.github.action.run.url %>"
+    }
+  }
+]

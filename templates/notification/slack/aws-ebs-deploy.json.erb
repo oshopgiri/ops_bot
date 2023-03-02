@@ -1,0 +1,48 @@
+[
+  {
+    "type": "header",
+    "text": {
+      "type": "plain_text",
+      "text": "New <%= OpsBot::Context.env.workflow.environment %> deploy triggered",
+      "emoji": true
+    }
+  }, {
+    "type": "divider"
+  }, {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": "<%= OpsBot::Context.env.github.actor.username %> :ship: <%= OpsBot::Context.env.aws.ebs.application.name %> [<%= OpsBot::Context.env.aws.ebs.application.environment.name %>]"
+    },
+    "accessory": {
+      "type": "button",
+      "text": {
+        "type": "plain_text",
+        "text": "Logs",
+        "emoji": true
+      },
+      "url": "<%= OpsBot::Context.utils.github.action.run.url %>"
+    }
+  }, {
+    "type": "actions",
+    "elements": [
+      {
+        "type": "button",
+        "text": {
+          "type": "plain_text",
+          "text": "branch: <%= OpsBot::Context.env.github.branch.ref %>",
+          "emoji": true
+        },
+        "url": "<%= OpsBot::Context.utils.github.action.branch.ref_url %>"
+      }, {
+        "type": "button",
+        "text": {
+          "type": "plain_text",
+          "text": "ref: <%= OpsBot::Context.env.github.branch.sha %>",
+          "emoji": true
+        },
+        "url": "<%= OpsBot::Context.utils.github.action.branch.sha_url %>"
+      }
+    ]
+  }
+]

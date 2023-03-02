@@ -5,4 +5,4 @@ boot_script = File.join(
 )
 require_relative boot_script
 
-exit(OpsBot::Job::Build.execute)
+exit(OpsBot::Job::AWS::EC2::SecurityGroup::WhitelistIP.execute)

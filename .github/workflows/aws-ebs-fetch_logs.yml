@@ -1,0 +1,56 @@
+name: (AWS EBS) Fetch Logs
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      SENTRY_DSN:
+        required: false
+
+env:
+  APP_ENV: production
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_EBS_APPLICATION_NAME: ${{ vars.AWS_EBS_APPLICATION_NAME }}
+  AWS_EBS_ENVIRONMENT_NAME: ${{ vars.AWS_EBS_ENVIRONMENT_NAME }}
+  LOG_FILE_PATH: ./${{ vars.AWS_EBS_ENVIRONMENT_NAME }}_logs.zip
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
+
+jobs:
+  fetch_logs:
+    environment:
+      name: ${{ inputs.environment }}
+    name: ${{ inputs.environment }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Logging run context
+        run: |
+          echo "user: ${{ github.actor }},
+          fetching logs for EBS environment: $AWS_EBS_ENVIRONMENT_NAME"
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/deploy_actions
+          ref: refractoring_v3
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Fetching logs
+        run: ruby ./bin/aws/ebs/fetch_logs.rb
+      - name: Publishing logs as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.AWS_EBS_ENVIRONMENT_NAME }}
+          path: ${{ env.LOG_FILE_PATH }}

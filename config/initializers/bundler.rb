@@ -1,1 +1,1 @@
-Bundler.require(*Application.groups)
+Bundler.require(*[:default, Application.groups].flatten)
