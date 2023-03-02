@@ -5,4 +5,17 @@ class OpsBot::Job::AWS::EBS::FetchLogs < OpsBot::Job::Base
 
     status
   end
+
+  def self.tags
+    super
+
+    aws_application_context = OpsBot::Context.env.aws.ebs.application
+
+    OpsBot::Integration::Sentry.set_tags(
+      {
+        'aws.application': aws_application_context.name,
+        'aws.environment': aws_application_context.environment.name
+      }
+    )
+  end
 end
