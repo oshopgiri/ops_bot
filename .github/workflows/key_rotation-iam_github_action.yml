@@ -44,8 +44,8 @@ jobs:
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:
-          repository: oshopgiri/deploy_actions
-          ref: refractoring_v3
+          repository: oshopgiri/ops_bot
+          ref: main
           path: ./
       - name: Setting-up Ruby
         uses: ruby/setup-ruby@v1
