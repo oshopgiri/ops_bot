@@ -14,12 +14,3 @@ class OpsBot::Build::Base
     raise 'method definition missing!'
   end
 end
-
-# def build
-#   case @type
-#   when 'war'
-#     package_war
-#   when 'zip'
-#     package_zip
-#   end
-# end

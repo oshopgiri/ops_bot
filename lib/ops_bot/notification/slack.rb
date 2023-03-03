@@ -4,7 +4,6 @@ class OpsBot::Notification::Slack < OpsBot::Notification::Base
       client.auth_test
       OpsBot::Context.env.slack.channel_ids
     rescue
-      $logger.error('Unable to initialize Slack client, skipping notification...')
       nil
     end
   end
