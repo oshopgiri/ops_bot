@@ -15,6 +15,10 @@ class OpsBot::Integration::AWS::S3
     false
   end
 
+  def build_url
+    "s3://#{@bucket}/#{@key}"
+  end
+
   def download_build
     resource
       .bucket(@bucket)
