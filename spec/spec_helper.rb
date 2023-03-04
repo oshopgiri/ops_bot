@@ -2,6 +2,9 @@ ENV['APP_ENV'] = 'test'
 
 require_relative '../config/boot.rb'
 
+Dotenv.load('./spec/fixtures/.env', './spec/fixtures/.secrets')
+OpsBot::Context.build
+
 RSpec.configure do |config|
   config.before(:all) do
     $logger.level = Logger::FATAL
