@@ -3,6 +3,7 @@ require 'spec_helper'
 RSpec.describe OpsBot::Job::AWS::EBS::Deploy, type: :job do
   let(:client_klass) { OpsBot::Integration::AWS::EBS }
   let(:slack_client_klass) { OpsBot::Notification::Slack }
+  let(:s3_client_klass) { OpsBot::Integration::AWS::S3 }
 
   after do
     described_class.execute
@@ -11,6 +12,8 @@ RSpec.describe OpsBot::Job::AWS::EBS::Deploy, type: :job do
   describe '#perform' do
     before do
       allow_any_instance_of(client_klass).to receive(:deploy_version).and_return(true)
+      # TODO: add specs around this
+      allow_any_instance_of(s3_client_klass).to receive(:build_exists?).and_return(true)
     end
 
     context 'when application version is already present' do
