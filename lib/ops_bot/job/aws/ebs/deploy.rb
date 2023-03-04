@@ -2,6 +2,12 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
   def self.perform
     ebs_client = OpsBot::Integration::AWS::EBS.new
     ebs_version_label = OpsBot::Context.utils.build.version
+    s3_client = OpsBot::Integration::AWS::S3.new
+
+    unless s3_client.build_exists?
+      $logger.error("Build not found on S3: #{s3_client.build_url}")
+      return false
+    end
 
     if ebs_client.version_exists?
       $logger.info("Existing application version found on EBS: #{ebs_version_label}, skipping version creation...")
