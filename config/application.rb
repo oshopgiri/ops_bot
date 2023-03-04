@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
 class Application
   ENVIRONMENTS = %i[development test production].freeze
   INFLECTIONS = {
-    'aws'    => 'AWS',
-    'ebs'    => 'EBS',
-    'ec2'    => 'EC2',
+    'aws' => 'AWS',
+    'ebs' => 'EBS',
+    'ec2' => 'EC2',
     'github' => 'GitHub',
-    'iam'    => 'IAM',
-    'ip'     => 'IP',
-    's3'     => 'S3',
-    'war'    => 'WAR',
-    'zip'    => 'ZIP'
-  }
+    'iam' => 'IAM',
+    'ip' => 'IP',
+    's3' => 'S3',
+    'war' => 'WAR',
+    'zip' => 'ZIP'
+  }.freeze
 
   def self.groups
     @groups ||= [

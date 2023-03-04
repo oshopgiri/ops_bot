@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ENV['APP_ENV'] ||= 'development'
 
 require 'rubygems'
@@ -6,6 +8,6 @@ require 'active_support'
 require 'active_support/core_ext'
 
 # don't break the require sequence here
-require_relative './application.rb'
-require_relative './initializers.rb'
-require_relative './environment.rb'
+require_relative './application'
+require_relative './initializers'
+require_relative './environment'

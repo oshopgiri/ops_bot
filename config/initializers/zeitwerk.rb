@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CustomInflector < Zeitwerk::Inflector
   def camelize(basename, _abspath)
     overrides[basename] || basename.split('_').map(&:camelize).join
