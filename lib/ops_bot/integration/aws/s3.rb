@@ -5,7 +5,7 @@ class OpsBot::Integration::AWS::S3
     @build_path = OpsBot::Context.utils.build.path
   end
 
-  def build_exists?
+  def file_exists?
     client.head_object(
       bucket: @bucket,
       key: @key
@@ -15,11 +15,11 @@ class OpsBot::Integration::AWS::S3
     false
   end
 
-  def build_url
+  def file_url
     "s3://#{@bucket}/#{@key}"
   end
 
-  def download_build
+  def download_file
     resource
       .bucket(@bucket)
       .object(@key)
@@ -29,7 +29,7 @@ class OpsBot::Integration::AWS::S3
     false
   end
 
-  def upload_build
+  def upload_file
     resource
       .bucket(@bucket)
       .object(@key)

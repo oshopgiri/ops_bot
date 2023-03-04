@@ -15,24 +15,24 @@ RSpec.describe OpsBot::Job::Build, type: :job do
   describe '#perform' do
     context 'when build is already present' do
       before do
-        allow_any_instance_of(s3_client_klass).to receive(:build_exists?).and_return(true)
+        allow_any_instance_of(s3_client_klass).to receive(:file_exists?).and_return(true)
       end
 
       it 'skips build creation' do
         expect_any_instance_of(client_klass).not_to receive(:package)
-        expect_any_instance_of(s3_client_klass).not_to receive(:upload_build)
+        expect_any_instance_of(s3_client_klass).not_to receive(:upload_file)
       end
     end
 
     context 'when build is not present' do
       before do
         allow_any_instance_of(client_klass).to receive(:build_exists?).and_return(true)
-        allow_any_instance_of(s3_client_klass).to receive(:build_exists?).and_return(false, true)
+        allow_any_instance_of(s3_client_klass).to receive(:file_exists?).and_return(false, true)
       end
 
       it 'creates and uploads a build' do
         expect_any_instance_of(client_klass).to receive(:package)
-        expect_any_instance_of(s3_client_klass).to receive(:upload_build)
+        expect_any_instance_of(s3_client_klass).to receive(:upload_file)
       end
 
       context 'when build creation fails' do
@@ -42,7 +42,7 @@ RSpec.describe OpsBot::Job::Build, type: :job do
 
         it 'skips build upload' do
           expect_any_instance_of(client_klass).to receive(:package)
-          expect_any_instance_of(s3_client_klass).not_to receive(:upload_build)
+          expect_any_instance_of(s3_client_klass).not_to receive(:upload_file)
         end
       end
     end

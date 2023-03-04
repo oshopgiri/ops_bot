@@ -4,8 +4,8 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
     ebs_version_label = OpsBot::Context.utils.build.version
     s3_client = OpsBot::Integration::AWS::S3.new
 
-    unless s3_client.build_exists?
-      $logger.error("Build not found on S3: #{s3_client.build_url}")
+    unless s3_client.file_exists?
+      $logger.error("Build not found on S3: #{s3_client.file_url}")
       return false
     end
 

@@ -13,7 +13,7 @@ RSpec.describe OpsBot::Job::AWS::EBS::Deploy, type: :job do
     before do
       allow_any_instance_of(client_klass).to receive(:deploy_version).and_return(true)
       # TODO: add specs around this
-      allow_any_instance_of(s3_client_klass).to receive(:build_exists?).and_return(true)
+      allow_any_instance_of(s3_client_klass).to receive(:file_exists?).and_return(true)
     end
 
     context 'when application version is already present' do
