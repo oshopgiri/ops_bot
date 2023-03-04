@@ -11,6 +11,7 @@ jobs:
     name: ${{ matrix.spec_type }}
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
         spec_type: [job, notification, system]
     steps:
