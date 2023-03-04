@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe OpsBot::Job::AWS::EBS::FetchLogs, type: :job do
@@ -8,7 +10,7 @@ RSpec.describe OpsBot::Job::AWS::EBS::FetchLogs, type: :job do
   end
 
   describe '#perform' do
-    it 'retrives logs' do
+    it 'retrieves logs' do
       expect_any_instance_of(client_klass).to receive(:retrieve_logs).once
     end
   end

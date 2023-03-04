@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe OpsBot::Job::AWS::EBS::Deploy, type: :job do
@@ -52,7 +54,7 @@ RSpec.describe OpsBot::Job::AWS::EBS::Deploy, type: :job do
     context 'when deploying to production environment' do
       before do
         allow_any_instance_of(client_klass).to receive(:version_exists?).and_return(true)
-        
+
         allow(OpsBot::Context.utils.workflow).to receive(:is_production?).and_return(true)
       end
 
