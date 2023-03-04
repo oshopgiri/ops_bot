@@ -21,4 +21,5 @@ end
 group :development, :test do
   gem 'debug', require: 'debug'
   gem 'dotenv'
+  gem 'rubocop'
 end
