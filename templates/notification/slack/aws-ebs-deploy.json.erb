@@ -1,26 +1,23 @@
 [
   {
-    "type": "header",
+    "type": "section",
     "text": {
-      "type": "plain_text",
-      "text": "New <%= OpsBot::Context.env.workflow.environment %> deploy triggered",
-      "emoji": true
+      "type": "mrkdwn",
+      "text": "New *<%= OpsBot::Context.env.workflow.environment %>* deploy triggered"
     }
-  }, {
-    "type": "divider"
   }, {
     "type": "section",
     "text": {
       "type": "mrkdwn",
-      "text": "<%= OpsBot::Context.env.github.actor.username %> :ship: <%= OpsBot::Context.env.aws.ebs.application.name %> [<%= OpsBot::Context.env.aws.ebs.application.environment.name %>]"
+      "text": "GitHub user: *<%= OpsBot::Context.env.github.actor.username %>*\nAWS EBS Application: *<%= OpsBot::Context.env.aws.ebs.application.name %>*\nAWS EBS Environment: *<%= OpsBot::Context.env.aws.ebs.application.environment.name %>*"
     },
     "accessory": {
       "type": "button",
       "text": {
         "type": "plain_text",
-        "text": "Logs",
-        "emoji": true
+        "text": "Logs"
       },
+      "style": "primary",
       "url": "<%= OpsBot::Context.utils.github.action.run.url %>"
     }
   }, {
@@ -30,16 +27,14 @@
         "type": "button",
         "text": {
           "type": "plain_text",
-          "text": "branch: <%= OpsBot::Context.env.github.branch.ref %>",
-          "emoji": true
+          "text": "branch: <%= OpsBot::Context.env.github.branch.ref %>"
         },
         "url": "<%= OpsBot::Context.utils.github.action.branch.ref_url %>"
       }, {
         "type": "button",
         "text": {
           "type": "plain_text",
-          "text": "ref: <%= OpsBot::Context.env.github.branch.sha %>",
-          "emoji": true
+          "text": "ref: <%= OpsBot::Context.env.github.branch.sha %>"
         },
         "url": "<%= OpsBot::Context.utils.github.action.branch.sha_url %>"
       }
