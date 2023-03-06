@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OpsBot::Integration::Sentry
   def self.capture_exception(exception)
     Application.logger.error(exception)

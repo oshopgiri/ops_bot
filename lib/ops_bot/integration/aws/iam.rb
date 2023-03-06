@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OpsBot::Integration::AWS::IAM
   MAX_RETRIES = 5.freeze
 
@@ -13,11 +15,14 @@ class OpsBot::Integration::AWS::IAM
     begin
       sleep(10.seconds)
 
-      new_client.update_access_key({
-        access_key_id: existing_access_key_id,
-        status: 'Inactive',
-        user_name: @user_name
-      })
+      new_client
+        .update_access_key(
+          {
+            access_key_id: existing_access_key_id,
+            status: 'Inactive',
+            user_name: @user_name
+          }
+        )
     rescue
       try += 1
       retry if try < MAX_RETRIES
@@ -33,10 +38,13 @@ class OpsBot::Integration::AWS::IAM
     begin
       sleep(10.seconds)
 
-      new_client.delete_access_key({
-        access_key_id: existing_access_key_id,
-        user_name: @user_name
-      })
+      new_client
+        .delete_access_key(
+          {
+            access_key_id: existing_access_key_id,
+            user_name: @user_name
+          }
+        )
     rescue
       try += 1
       retry if try < MAX_RETRIES
@@ -44,9 +52,9 @@ class OpsBot::Integration::AWS::IAM
   end
 
   def generate_new_access_key
-    client.create_access_key({
-        user_name: @user_name
-    }).access_key
+    client
+      .create_access_key({ user_name: @user_name })
+      .access_key
   end
 
   def rotate_access_key
@@ -58,23 +66,23 @@ class OpsBot::Integration::AWS::IAM
 
   private
 
-    def client
-      @client ||= Aws::IAM::Client.new
-    end
+  def client
+    @client ||= Aws::IAM::Client.new
+  end
 
-    def new_client
-      @new_client ||= Aws::IAM::Client.new(
-        access_key_id: @new_access_key.access_key_id,
-        secret_access_key: @new_access_key.secret_access_key
-      )
-    end
+  def new_client
+    @new_client ||= Aws::IAM::Client.new(
+      access_key_id: @new_access_key.access_key_id,
+      secret_access_key: @new_access_key.secret_access_key
+    )
+  end
 
-    def existing_access_key_id
-      @existing_access_key_id ||= client.list_access_keys({
-        user_name: @user_name
-      }).access_key_metadata
-      .map(&:access_key_id)
-      .select { |access_key_id| access_key_id.eql? @access_key_id }
-      .first
-    end
+  def existing_access_key_id
+    @existing_access_key_id ||= client
+                                  .list_access_keys({ user_name: @user_name })
+                                  .access_key_metadata
+                                  .map(&:access_key_id)
+                                  .select { |access_key_id| access_key_id.eql? @access_key_id }
+                                  .first
+  end
 end

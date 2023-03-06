@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OpsBot::Concern::Executable
   extend ActiveSupport::Concern
 
@@ -6,8 +8,8 @@ module OpsBot::Concern::Executable
       tags
       result = perform
       result ? 0 : 1
-    rescue => exception
-      OpsBot::Integration::Sentry.capture_exception(exception)
+    rescue => e
+      OpsBot::Integration::Sentry.capture_exception(e)
       1
     end
 

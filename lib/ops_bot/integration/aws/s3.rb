@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OpsBot::Integration::AWS::S3
   def initialize
     @bucket = OpsBot::Context.env.aws.s3.bucket_name
@@ -6,10 +8,11 @@ class OpsBot::Integration::AWS::S3
   end
 
   def file_exists?
-    client.head_object(
-      bucket: @bucket,
-      key: @key
-    )
+    client
+      .head_object(
+        bucket: @bucket,
+        key: @key
+      )
     true
   rescue Aws::S3::Errors::NotFound
     false
@@ -38,11 +41,11 @@ class OpsBot::Integration::AWS::S3
 
   private
 
-    def client
-      @client ||= Aws::S3::Client.new
-    end
+  def client
+    @client ||= Aws::S3::Client.new
+  end
 
-    def resource
-      @resource = Aws::S3::Resource.new
-    end
+  def resource
+    @resource = Aws::S3::Resource.new
+  end
 end

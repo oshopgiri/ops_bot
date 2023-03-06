@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OpsBot::Concern::Renderable
   extend ActiveSupport::Concern
 
@@ -12,7 +14,7 @@ module OpsBot::Concern::Renderable
 
     def render_context
       @render_context ||= begin
-        class_name = self.name.dup
+        class_name = name.dup
         class_name.split('::')[1..].join('::').underscore
       end
     end
