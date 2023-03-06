@@ -1,6 +1,6 @@
 class OpsBot::Integration::Sentry
   def self.capture_exception(exception)
-    $logger.error(exception)
+    Application.logger.error(exception)
     Sentry.capture_exception(exception)
   end
 

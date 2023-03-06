@@ -9,10 +9,10 @@ OpsBot::Context.build
 
 RSpec.configure do |config|
   config.before(:all) do
-    $logger.level = Logger::FATAL
+    Application.logger.level = Logger::FATAL
   end
 
   config.after(:all) do
-    $logger.level = Logger::DEBUG
+    Application.logger.level = Logger::DEBUG
   end
 end

@@ -14,6 +14,12 @@ class Application
     'zip' => 'ZIP'
   }.freeze
 
+  class << self
+    attr_accessor :loader, :logger
+
+    delegate :reload, to: :loader
+  end
+
   def self.groups
     @groups ||= [
       ENV['APP_ENV']&.split(',')&.map(&:to_sym)

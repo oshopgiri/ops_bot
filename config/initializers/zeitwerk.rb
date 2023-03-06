@@ -10,4 +10,7 @@ loader = Zeitwerk::Loader.new
 loader.push_dir('lib')
 loader.inflector = CustomInflector.new
 Application::INFLECTIONS.each { |k, v| loader.inflector.inflect(k => v) }
+loader.enable_reloading unless Application.groups.include? 'production'
 loader.setup
+
+Application.loader = loader
