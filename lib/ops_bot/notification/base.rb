@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OpsBot::Notification::Base
   include OpsBot::Concern::Renderable
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OpsBot::Job::AWS::EC2::SecurityGroup::WhitelistIP < OpsBot::Job::Base
   def self.perform
     security_group_client = OpsBot::Integration::AWS::EC2::SecurityGroup.new

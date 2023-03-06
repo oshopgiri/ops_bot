@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class OpsBot::Notification::Slack < OpsBot::Notification::Base
   def initialize
     @channel_ids = begin
-      client.auth_test
-      OpsBot::Context.env.slack.channel_ids
-    rescue Slack::Web::Api::Errors::NotAuthed
-      nil
-    end
+                     client.auth_test
+                     OpsBot::Context.env.slack.channel_ids
+                   rescue Slack::Web::Api::Errors::NotAuthed
+                     nil
+                   end
   end
 
   def notify(template:, payload: {})

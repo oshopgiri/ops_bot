@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OpsBot::Job::Build < OpsBot::Job::Base
   def self.perform
     s3_client = OpsBot::Integration::AWS::S3.new

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
   def self.perform
     ebs_client = OpsBot::Integration::AWS::EBS.new
@@ -10,7 +12,9 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
     end
 
     if ebs_client.version_exists?
-      Application.logger.info("Existing application version found on EBS: #{ebs_version_label}, skipping version creation...")
+      Application.logger.info(
+        "Existing application version found on EBS: #{ebs_version_label}, skipping version creation..."
+      )
     else
       ebs_client.create_version
 

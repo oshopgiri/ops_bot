@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OpsBot::Build
   class UnsupportedTypeError < StandardError
     def initialize(type:)
