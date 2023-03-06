@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
   def self.perform
     iam_client = OpsBot::Integration::AWS::IAM.new
@@ -11,10 +13,7 @@ class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
         'AWS_ACCESS_KEY_ID': new_access_key.access_key_id,
         'AWS_SECRET_ACCESS_KEY': new_access_key.secret_access_key
       }.each do |name, value|
-        github_client.set_action_secret(
-          name: name,
-          value: value
-        )
+        github_client.set_action_secret(name:, value:)
       end
     end
 
@@ -23,9 +22,7 @@ class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
     slack_client = OpsBot::Notification::Slack.new
     slack_client.notify(
       template: 'key_rotation-iam_github_action.json.erb',
-      payload: {
-        new_access_key: new_access_key
-      }
+      payload: { new_access_key: }
     )
   end
 end

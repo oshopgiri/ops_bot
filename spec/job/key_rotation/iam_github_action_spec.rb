@@ -7,15 +7,15 @@ RSpec.describe OpsBot::Job::KeyRotation::IAMGitHubAction, type: :job do
   let(:github_client_klass) { OpsBot::Integration::GitHub }
   let(:slack_client_klass) { OpsBot::Notification::Slack }
 
-  let(:github_client_instance_1) { github_client_klass.new(repository: 'user/test1') }
-  let(:github_client_instance_2) { github_client_klass.new(repository: 'user/test2') }
+  before do
+    allow(github_client_klass).to receive(:auth_test).and_return(true)
+  end
 
   after do
     described_class.execute
   end
 
   describe '#perform' do
-    let(:serviced_repos) { [github_client_instance_1.repository, github_client_instance_2.repository] }
     let(:new_access_key) {
       OpenStruct.new(
         {
@@ -43,6 +43,10 @@ RSpec.describe OpsBot::Job::KeyRotation::IAMGitHubAction, type: :job do
     end
 
     context 'when `serviced_repos` are present' do
+      let(:github_client_instance1) { github_client_klass.new(repository: 'user/test1') }
+      let(:github_client_instance2) { github_client_klass.new(repository: 'user/test2') }
+      let(:serviced_repos) { [github_client_instance1.repository, github_client_instance2.repository] }
+
       before do
         allow(OpsBot::Context.env.access_key).to receive(:serviced_repos).and_return(serviced_repos)
       end
@@ -51,16 +55,16 @@ RSpec.describe OpsBot::Job::KeyRotation::IAMGitHubAction, type: :job do
         expect(github_client_klass)
           .to receive(:new)
                 .with(repository: serviced_repos.first)
-                .and_return(github_client_instance_1)
+                .and_return(github_client_instance1)
                 .ordered.once
-        expect(github_client_instance_1).to receive(:set_action_secret).twice
+        expect(github_client_instance1).to receive(:set_action_secret).and_return(true).twice
 
         expect(github_client_klass)
           .to receive(:new)
                 .with(repository: serviced_repos.second)
-                .and_return(github_client_instance_2)
+                .and_return(github_client_instance2)
                 .ordered.once
-        expect(github_client_instance_2).to receive(:set_action_secret).twice
+        expect(github_client_instance2).to receive(:set_action_secret).and_return(true).twice
       end
     end
   end
