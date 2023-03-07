@@ -6,7 +6,7 @@ class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
 
     new_access_key = iam_client.rotate_access_key
 
-    OpsBot::Context.env.access_key.serviced_repos.each do |repo|
+    OpsBot::Context.env.key_rotation.iam_github_action.serviced_repos.each do |repo|
       github_client = OpsBot::Integration::GitHub.new(repository: repo)
 
       {

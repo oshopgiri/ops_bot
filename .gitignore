@@ -1,6 +1,6 @@
 # ENV and Secrets
-**/.secrets
-**/.env
+/.secrets
+/.env
 
 # Package managers
 .bundle/**

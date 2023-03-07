@@ -48,7 +48,7 @@ RSpec.describe OpsBot::Job::KeyRotation::IAMGitHubAction, type: :job do
       let(:serviced_repos) { [github_client_instance1.repository, github_client_instance2.repository] }
 
       before do
-        allow(OpsBot::Context.env.access_key).to receive(:serviced_repos).and_return(serviced_repos)
+        allow(OpsBot::Context.env.key_rotation.iam_github_action).to receive(:serviced_repos).and_return(serviced_repos)
       end
 
       it 'updates all repositories' do
