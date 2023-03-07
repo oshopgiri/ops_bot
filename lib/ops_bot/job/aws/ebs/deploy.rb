@@ -29,7 +29,10 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
     ebs_client.deploy_version
 
     slack_client = OpsBot::Notification::Slack.new
-    slack_client.notify(template: 'aws-ebs-deploy.json.erb')
+    slack_client.notify(
+      channel: OpsBot::Notification::Slack::CHANNEL_NOTIFICATION,
+      template: 'aws-ebs-deploy.json.erb'
+    )
 
     true
   end

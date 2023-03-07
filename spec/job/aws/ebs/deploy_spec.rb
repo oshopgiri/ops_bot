@@ -52,6 +52,8 @@ RSpec.describe OpsBot::Job::AWS::EBS::Deploy, type: :job do
     end
 
     context 'when deploying to production environment' do
+      let(:notification_channel) { slack_client_klass::CHANNEL_NOTIFICATION }
+
       before do
         allow_any_instance_of(client_klass).to receive(:version_exists?).and_return(true)
 
@@ -59,7 +61,12 @@ RSpec.describe OpsBot::Job::AWS::EBS::Deploy, type: :job do
       end
 
       it 'notifies slack' do
-        expect_any_instance_of(slack_client_klass).to receive(:notify).with(template: 'aws-ebs-deploy.json.erb').once
+        expect_any_instance_of(slack_client_klass)
+          .to receive(:notify)
+                .with(
+                  channel: notification_channel,
+                  template: 'aws-ebs-deploy.json.erb'
+                ).once
       end
     end
   end

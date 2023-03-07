@@ -21,6 +21,7 @@ class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
   ensure
     slack_client = OpsBot::Notification::Slack.new
     slack_client.notify(
+      channel: OpsBot::Notification::Slack::CHANNEL_NOTIFICATION,
       template: 'key_rotation-iam_github_action.json.erb',
       payload: { new_access_key: }
     )

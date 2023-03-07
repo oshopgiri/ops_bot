@@ -24,6 +24,7 @@ RSpec.describe OpsBot::Job::KeyRotation::IAMGitHubAction, type: :job do
         }
       )
     }
+    let(:notification_channel) { slack_client_klass::CHANNEL_NOTIFICATION }
 
     before do
       allow_any_instance_of(client_klass).to receive(:rotate_access_key).and_return(new_access_key)
@@ -37,8 +38,9 @@ RSpec.describe OpsBot::Job::KeyRotation::IAMGitHubAction, type: :job do
       expect_any_instance_of(slack_client_klass)
         .to receive(:notify)
               .with(
+                channel: notification_channel,
                 template: 'key_rotation-iam_github_action.json.erb',
-                payload: { new_access_key: new_access_key }
+                payload: { new_access_key: }
               ).once
     end
 
