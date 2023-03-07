@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class OpsBot::Integration::AWS::S3
-  def initialize
-    @bucket = OpsBot::Context.env.aws.s3.bucket_name
+  def initialize(bucket: OpsBot::Context.env.aws.s3.buckets.build)
+    @bucket = bucket
     @key = OpsBot::Context.utils.build.s3_key
     @build_path = OpsBot::Context.utils.build.path
   end
@@ -27,9 +27,8 @@ class OpsBot::Integration::AWS::S3
       .bucket(@bucket)
       .object(@key)
       .download_file(@build_path)
-    true
   rescue Aws::S3::Errors::NotFound
-    false
+    nil
   end
 
   def upload_file
