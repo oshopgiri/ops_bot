@@ -1,41 +1,35 @@
 # frozen_string_literal: true
 
 class OpsBot::Integration::AWS::S3
-  def initialize(bucket: OpsBot::Context.env.aws.s3.buckets.build)
+  def initialize(bucket:)
     @bucket = bucket
-    @key = OpsBot::Context.utils.build.s3_key
-    @build_path = OpsBot::Context.utils.build.path
   end
 
-  def file_exists?
-    client
-      .head_object(
-        bucket: @bucket,
-        key: @key
-      )
+  def file_exists?(key:)
+    client.head_object(bucket: @bucket, key:)
     true
   rescue Aws::S3::Errors::NotFound
     false
   end
 
-  def file_url
-    "s3://#{@bucket}/#{@key}"
+  def uri_for(key:)
+    "s3://#{@bucket}/#{key}"
   end
 
-  def download_file
+  def download_file(key:, file_path:)
     resource
       .bucket(@bucket)
-      .object(@key)
-      .download_file(@build_path)
+      .object(key)
+      .download_file(file_path)
   rescue Aws::S3::Errors::NotFound
     nil
   end
 
-  def upload_file
+  def upload_file(key:, file_path:)
     resource
       .bucket(@bucket)
-      .object(@key)
-      .upload_file(@build_path)
+      .object(key)
+      .upload_file(file_path)
   end
 
   private

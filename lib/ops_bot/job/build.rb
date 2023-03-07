@@ -2,24 +2,22 @@
 
 class OpsBot::Job::Build < OpsBot::Job::Base
   def self.perform
-    s3_client = OpsBot::Integration::AWS::S3.new
+    build_client = OpsBot::Build.new
 
-    if s3_client.file_exists?
-      Application.logger.info("Existing build found on S3: #{s3_client.file_url}")
+    if build_client.uploaded?
+      Application.logger.info("Existing build found on S3: #{build_client.s3_uri}")
     else
-      build_client = OpsBot::Build.new
-
       build_client.package
 
-      unless build_client.build_exists?
+      unless build_client.exists?
         Application.logger.error('Build failed. Check logs for errors.')
         return false
       end
 
-      s3_client.upload_file
+      build_client.upload
 
-      if s3_client.file_exists?
-        Application.logger.info("Uploaded build to S3: #{s3_client.file_url}")
+      if build_client.uploaded?
+        Application.logger.info("Uploaded build to S3: #{build_client.s3_uri}")
       else
         Application.logger.error('Uploading build failed. Check logs for errors.')
         return false

@@ -5,7 +5,7 @@ class OpsBot::Build::ZIP < OpsBot::Build::Base
     system("cd #{@source_directory} && zip #{@name} -qr * .[^.]*")
     FileUtils.mv(
       "#{@source_directory}/#{@name}",
-      @build_path
+      @path
     )
   end
 end

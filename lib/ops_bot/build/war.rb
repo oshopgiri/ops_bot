@@ -5,7 +5,7 @@ class OpsBot::Build::WAR < OpsBot::Build::Base
     system("cd #{@source_directory} && mvn package -q -f pom.xml")
     FileUtils.mv(
       Dir["#{@source_directory}/target/**.war"].first,
-      @build_path
+      @path
     )
   end
 end

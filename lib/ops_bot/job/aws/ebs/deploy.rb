@@ -2,12 +2,13 @@
 
 class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
   def self.perform
+    build_client = OpsBot::Build.new
     ebs_client = OpsBot::Integration::AWS::EBS.new
-    ebs_version_label = OpsBot::Context.utils.build.version
-    s3_client = OpsBot::Integration::AWS::S3.new
 
-    unless s3_client.file_exists?
-      Application.logger.error("Build not found on S3: #{s3_client.file_url}")
+    ebs_version_label = OpsBot::Context.utils.build.version
+
+    unless build_client.uploaded?
+      Application.logger.error("Build not found on S3: #{build_client.s3_uri}")
       return false
     end
 
