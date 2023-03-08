@@ -14,7 +14,7 @@ on:
       AWS_REGION:
         required: true
       SENTRY_DSN:
-        required: false
+        required: true
       SLACK_BOT_TOKEN:
         required: false
 

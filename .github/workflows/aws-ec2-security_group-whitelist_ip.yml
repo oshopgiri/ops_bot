@@ -25,7 +25,7 @@ on:
       AWS_EC2_SECURITY_GROUP_ID:
         required: true
       SENTRY_DSN:
-        required: false
+        required: true
 
 env:
   APP_ENV: production
