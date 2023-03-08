@@ -28,7 +28,6 @@ env:
 
 jobs:
   branch_s3_builds:
-    name: ${{ github.ref_name }}
     runs-on: ubuntu-20.04
     steps:
       - name: Checking-out remote scripts
@@ -41,5 +40,5 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Cleaning up S3 builds
+      - name: Cleaning up S3 builds for branch ${{ github.ref_name }}
         run: ruby ./bin/cleanup/branch_s3_builds.rb
