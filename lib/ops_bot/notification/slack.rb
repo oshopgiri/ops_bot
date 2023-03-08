@@ -20,6 +20,8 @@ class OpsBot::Notification::Slack < OpsBot::Notification::Base
     )
   rescue Slack::Web::Api::Errors::NotAuthed
     nil
+  rescue Slack::Web::Api::Errors::SlackError => e
+    OpsBot::Integration::Sentry.capture_exception(e)
   end
 
   private
