@@ -1,0 +1,40 @@
+name: (Cleanup) Branch S3 Builds
+
+on:
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SENTRY_DSN:
+        required: false
+
+env:
+  APP_ENV: production
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_EBS_APPLICATION_NAME: ${{ vars.AWS_EBS_APPLICATION_NAME }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_S3_BUILD_BUCKET_NAME: ${{ vars.AWS_S3_BUILD_BUCKET_NAME }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+jobs:
+  branch_s3_builds:
+    name: ${{ github.ref_name }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/ops_bot
+          ref: main
+          path: ./
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Cleaning up S3 builds
+        run: ruby ./bin/cleanup/branch_s3_builds.rb

@@ -5,15 +5,18 @@ class OpsBot::Integration::AWS::S3
     @bucket = bucket
   end
 
+  def batch_delete(directory_key:)
+    resource
+      .bucket(@bucket)
+      .objects({ prefix: directory_key })
+      .batch_delete!
+  end
+
   def file_exists?(key:)
     client.head_object(bucket: @bucket, key:)
     true
   rescue Aws::S3::Errors::NotFound
     false
-  end
-
-  def uri_for(key:)
-    "s3://#{@bucket}/#{key}"
   end
 
   def download_file(key:, file_path:)
@@ -32,6 +35,10 @@ class OpsBot::Integration::AWS::S3
       .upload_file(file_path)
   end
 
+  def uri_for(key:)
+    "s3://#{@bucket}/#{key}"
+  end
+
   private
 
   def client
@@ -39,6 +46,6 @@ class OpsBot::Integration::AWS::S3
   end
 
   def resource
-    @resource = Aws::S3::Resource.new
+    @resource = Aws::S3::Resource.new(client:)
   end
 end
