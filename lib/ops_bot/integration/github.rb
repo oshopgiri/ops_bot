@@ -30,6 +30,6 @@ class OpsBot::Integration::GitHub
     return unless @repository
 
     result = system("gh secret set #{name} -a actions -b #{value} -R #{@repository}")
-    OpsBot::Integration::Sentry.capture_exception(InconsistentSecretError.new(name:)) unless result
+    Application.capture_exception(InconsistentSecretError.new(name:)) unless result
   end
 end

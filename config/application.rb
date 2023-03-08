@@ -15,8 +15,9 @@ class Application
   }.freeze
 
   class << self
-    attr_accessor :loader, :logger
+    attr_accessor :exception_notifier, :loader, :logger
 
+    delegate :capture_exception, to: :exception_notifier
     delegate :reload, to: :loader
   end
 

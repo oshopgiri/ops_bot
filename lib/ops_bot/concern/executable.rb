@@ -9,14 +9,14 @@ module OpsBot::Concern::Executable
       result = perform
       result ? 0 : 1
     rescue => e
-      OpsBot::Integration::Sentry.capture_exception(e)
+      Application.capture_exception(e)
       1
     end
 
     def tags
       github_context = OpsBot::Context.env.github
 
-      OpsBot::Integration::Sentry.set_tags(
+      Application.exception_notifier.set_tags(
         {
           'github.branch': github_context.branch.ref,
           'github.commit': github_context.branch.sha,
