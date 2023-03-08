@@ -21,7 +21,7 @@ class OpsBot::Build::Base
     raise 'method definition missing!'
   end
 
-  def s3_cleanup
+  def delete_s3_branch_directory
     @s3_client.delete_directory(key: @s3_directory_key)
   end
 
