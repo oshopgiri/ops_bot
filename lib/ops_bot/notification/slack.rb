@@ -7,8 +7,11 @@ class OpsBot::Notification::Slack < OpsBot::Notification::Base
   def notify(channel:, template:, payload: {})
     client.auth_test
 
+    channel = OpsBot::Context.env.slack.channels.send(channel)
+    return unless channel
+
     client.chat_postMessage(
-      channel: OpsBot::Context.env.slack.channels.send(channel),
+      channel:,
       blocks: self.class.render(
         view_file: template,
         instance: self,
