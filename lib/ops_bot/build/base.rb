@@ -22,7 +22,7 @@ class OpsBot::Build::Base
   end
 
   def s3_cleanup
-    @s3_client.batch_delete(directory_key: @s3_directory_key)
+    @s3_client.delete_directory(key: @s3_directory_key)
   end
 
   def s3_uri

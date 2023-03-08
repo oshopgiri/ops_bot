@@ -5,10 +5,10 @@ class OpsBot::Integration::AWS::S3
     @bucket = bucket
   end
 
-  def batch_delete(directory_key:)
+  def delete_directory(key:)
     resource
       .bucket(@bucket)
-      .objects({ prefix: directory_key })
+      .objects({ prefix: key })
       .batch_delete!
   end
 
