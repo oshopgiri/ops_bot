@@ -2,6 +2,10 @@ name: (Cleanup) Branch S3 Builds
 
 on:
   workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -20,6 +24,7 @@ env:
   AWS_S3_BUILD_BUCKET_NAME: ${{ vars.AWS_S3_BUILD_BUCKET_NAME }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
 jobs:
   branch_s3_builds:
