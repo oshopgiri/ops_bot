@@ -12,8 +12,8 @@ class OpsBot::Integration::AWS::S3
       .batch_delete!
   end
 
-  def delete_objects_older_than(time: 30.days)
-    return if time.to_i.eql? 0
+  def delete_objects_older_than(time:)
+    return if time.to_i <= 0
 
     resource
       .bucket(@bucket)
