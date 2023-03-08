@@ -8,7 +8,7 @@ class OpsBot::Notification::Slack < OpsBot::Notification::Base
     client.auth_test
 
     channel_id = OpsBot::Context.env.slack.channels.send(channel)
-    return unless channel_id
+    return unless channel_id.present?
 
     client.chat_postMessage(
       channel: channel_id,
