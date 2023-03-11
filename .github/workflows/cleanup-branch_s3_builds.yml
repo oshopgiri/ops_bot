@@ -29,7 +29,7 @@ env:
 
 jobs:
   branch_s3_builds:
-    name: ${{ env.C_S3_BUILDS_EVENT_BRANCH_REF }}
+    name: ${{ github.event.ref }}
     environment:
       name: ${{ inputs.environment }}
     runs-on: ubuntu-20.04
