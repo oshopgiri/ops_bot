@@ -23,6 +23,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_S3_BUILD_BUCKET_NAME: ${{ vars.AWS_S3_BUILD_BUCKET_NAME }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  C_S3_BUILDS_EVENT_BRANCH_REF: ${{ github.event.ref }}
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
 
@@ -40,5 +41,5 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Cleaning up S3 builds for branch ${{ github.event.ref }}
+      - name: Cleaning up S3 builds for branch ${{ env.C_S3_BUILDS_EVENT_BRANCH_REF }}
         run: ruby ./bin/cleanup/branch_s3_builds.rb

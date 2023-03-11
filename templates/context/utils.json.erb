@@ -27,7 +27,7 @@
   "build": {
     "name": "<%= "ref-#{OpsBot::Context.env.github.branch.sha}.#{OpsBot::Context.env.build.type}" %>",
     "path": "<%= "#{OpsBot::Context.env.build.directory}/ref-#{OpsBot::Context.env.github.branch.sha}.#{OpsBot::Context.env.build.type}" %>",
-    "s3_directory_key": "<%= "#{OpsBot::Context.env.aws.ebs.application.name&.parameterize}/#{OpsBot::Context.env.github.branch.ref.titleize.parameterize}/" %>",
+    "s3_directory_key": "<%= "#{OpsBot::Context.env.aws.ebs.application.name&.parameterize}/#{OpsBot::Context.env.github.event.branch.ref.titleize.parameterize}/" %>",
     "s3_key": "<%= "#{OpsBot::Context.env.aws.ebs.application.name&.parameterize}/#{OpsBot::Context.env.github.branch.ref.titleize.parameterize}/ref-#{OpsBot::Context.env.github.branch.sha}.#{OpsBot::Context.env.build.type}" %>",
     "version": "<%= "ver-#{OpsBot::Context.env.github.branch.sha}" %>"
   },
