@@ -40,5 +40,5 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Cleaning up S3 builds for branch ${{ github.event.ref_name }}
+      - name: Cleaning up S3 builds for branch ${{ github.event.ref }}
         run: ruby ./bin/cleanup/branch_s3_builds.rb
