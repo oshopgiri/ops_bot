@@ -29,9 +29,9 @@ env:
 
 jobs:
   branch_s3_builds:
-    name: ${{ github.event.ref }}
     environment:
       name: ${{ inputs.environment }}
+    name: ${{ github.event.ref }}
     runs-on: ubuntu-20.04
     steps:
       - name: Checking-out remote scripts
