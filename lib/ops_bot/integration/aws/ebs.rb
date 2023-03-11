@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class OpsBot::Integration::AWS::EBS
+  MAX_RETRIES = 5.freeze
+
   def initialize
     @application_name = OpsBot::Context.env.aws.ebs.application.name
     @build_s3_bucket = OpsBot::Context.env.aws.s3.buckets.build
@@ -27,13 +29,28 @@ class OpsBot::Integration::AWS::EBS
   end
 
   def deploy_version
-    client
-      .update_environment(
-        {
-          environment_name: @environment_name,
-          version_label: @version_label
-        }
+    try = 0
+
+    begin
+      client
+        .update_environment(
+          {
+            environment_name: @environment_name,
+            version_label: @version_label
+          }
+        )
+    rescue Aws::ElasticBeanstalk::Errors::InvalidParameterValue => e
+      raise unless e.message.include? 'is in an invalid state for this operation. Must be Ready.'
+
+      try += 1
+      Application.logger.info(
+        "Version deployment failed as instance is not Ready. (retrying #{try} of #{MAX_RETRIES})"
       )
+      if try < MAX_RETRIES
+        sleep((try * 10).seconds)
+        retry
+      end
+    end
   end
 
   def describe_environment

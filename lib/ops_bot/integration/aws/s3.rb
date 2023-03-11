@@ -19,7 +19,7 @@ class OpsBot::Integration::AWS::S3
       .bucket(@bucket)
       .objects
       .filter { |obj| obj.last_modified < time.ago }
-      .each &:delete
+      .each(&:delete)
   end
 
   def file_exists?(key:)
