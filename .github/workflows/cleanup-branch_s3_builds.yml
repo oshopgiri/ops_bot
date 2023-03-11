@@ -29,6 +29,9 @@ env:
 
 jobs:
   branch_s3_builds:
+    name: ${{ env.C_S3_BUILDS_EVENT_BRANCH_REF }}
+    environment:
+      name: ${{ inputs.environment }}
     runs-on: ubuntu-20.04
     steps:
       - name: Checking-out remote scripts
@@ -41,5 +44,5 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Cleaning up S3 builds for branch ${{ env.C_S3_BUILDS_EVENT_BRANCH_REF }}
+      - name: Cleaning up S3 builds
         run: ruby ./bin/cleanup/branch_s3_builds.rb
