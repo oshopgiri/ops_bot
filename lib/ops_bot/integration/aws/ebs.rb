@@ -3,7 +3,11 @@
 class OpsBot::Integration::AWS::EBS
   MAX_RETRIES = 5.freeze
 
-  def initialize(application_name:, environment_name:)
+  # service all environments in the current region
+  def initialize; end
+
+  # service specific environment(s) filtered by application/environment name
+  def initialize(application_name:, environment_name: '')
     @application_name = application_name
     @environment_name = environment_name
   end
