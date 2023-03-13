@@ -12,14 +12,22 @@ class OpsBot::Integration::AWS::S3
       .batch_delete!
   end
 
-  def delete_objects_older_than(time:)
-    return if time.to_i <= 0
+  def delete_objects_older_than(time:, filter: {})
+    return 0 if time.to_i <= 0
 
-    resource
-      .bucket(@bucket)
-      .objects
-      .filter { |obj| obj.last_modified < time.ago }
-      .each(&:delete)
+    objects = resource
+                .bucket(@bucket)
+                .objects
+                .filter { |obj| obj.last_modified < time.ago }
+
+    if filter[:excludes].present?
+      objects.delete_if { |obj| filter[:excludes].any? { |exclude| obj.key.include?(exclude) } }
+    end
+
+    object_deletion_count = objects.count
+    objects.each(&:delete)
+
+    object_deletion_count
   end
 
   def file_exists?(key:)
