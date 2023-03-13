@@ -3,9 +3,9 @@
 class OpsBot::Integration::AWS::IAM
   MAX_RETRIES = 5.freeze
 
-  def initialize
-    @access_key_id = OpsBot::Context.secrets.aws.access_key_id
-    @user_name = OpsBot::Context.secrets.aws.iam.user_name
+  def initialize(access_key_id:, user_name:)
+    @access_key_id = access_key_id
+    @user_name = user_name
   end
 
   def deactivate_access_key

@@ -2,7 +2,10 @@
 
 class OpsBot::Job::KeyRotation::IAMGitHubAction < OpsBot::Job::Base
   def self.perform
-    iam_client = OpsBot::Integration::AWS::IAM.new
+    iam_client = OpsBot::Integration::AWS::IAM.new(
+      access_key_id: OpsBot::Context.secrets.aws.access_key_id,
+      user_name: OpsBot::Context.secrets.aws.iam.user_name
+    )
 
     new_access_key = iam_client.rotate_access_key
 
