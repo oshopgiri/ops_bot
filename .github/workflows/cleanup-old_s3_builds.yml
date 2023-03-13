@@ -31,6 +31,9 @@ env:
 
 jobs:
   old_s3_builds:
+    environment:
+      name: ${{ inputs.environment }}
+    name: ${{ inputs.older_than }} days
     runs-on: ubuntu-20.04
     steps:
       - name: Checking-out remote scripts
