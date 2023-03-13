@@ -48,7 +48,7 @@ jobs:
       - name: Logging run context
         run: |
           echo "user: ${{ github.actor }},
-          deploying branch: ${{ github.ref }},
+          deploying branch: ${{ github.event.ref }},
           to EBS environment: $AWS_EBS_APPLICATION_NAME [$AWS_EBS_ENVIRONMENT_NAME]"
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
