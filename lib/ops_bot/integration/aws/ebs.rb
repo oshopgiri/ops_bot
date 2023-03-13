@@ -3,40 +3,37 @@
 class OpsBot::Integration::AWS::EBS
   MAX_RETRIES = 5.freeze
 
-  def initialize
-    @application_name = OpsBot::Context.env.aws.ebs.application.name
-    @environment_name = OpsBot::Context.env.aws.ebs.application.environment.name
-    @instance_type = OpsBot::Context.env.aws.ebs.application.environment.config.instance_type
-    @log_file_path = OpsBot::Context.env.log.file_path
-    @s3_bucket = OpsBot::Context.env.aws.s3.buckets.build
-
-    @build_s3_key = OpsBot::Context.utils.build.s3_key
-    @version_label = OpsBot::Context.utils.build.version
+  def initialize(application_name:, environment_name:)
+    @application_name = application_name
+    @environment_name = environment_name
   end
 
-  def create_version
+  def create_version(build:, label:)
+    return unless build[:s3].present?
+
     client
       .create_application_version(
         {
           application_name: @application_name,
           source_bundle: {
-            s3_bucket: @s3_bucket,
-            s3_key: @build_s3_key
+            s3_bucket: build[:s3][:bucket],
+            s3_key: build[:s3][:key]
           },
-          version_label: @version_label
+          version_label: label
         }
       )
   end
 
-  def deploy_version
-    try = 0
+  def deploy_version(label:)
+    return unless label.present?
 
+    try = 0
     begin
       client
         .update_environment(
           {
             environment_name: @environment_name,
-            version_label: @version_label
+            version_label: label
           }
         )
     rescue Aws::ElasticBeanstalk::Errors::InvalidParameterValue => e
@@ -63,7 +60,7 @@ class OpsBot::Integration::AWS::EBS
     response.environments
   end
 
-  def retrieve_logs
+  def retrieve_logs(file_path:)
     request_logs
 
     response = client
@@ -75,14 +72,17 @@ class OpsBot::Integration::AWS::EBS
                  )
 
     if response.environment_info
-      download_logs(url: response.environment_info.first.message)
+      download_logs(
+        file_path:,
+        url: response.environment_info.first.message
+      )
       true
     else
       false
     end
   end
 
-  def update_instance_type
+  def update_instance_type(type:)
     client
       .update_environment(
         {
@@ -91,19 +91,19 @@ class OpsBot::Integration::AWS::EBS
             {
               namespace: 'aws:autoscaling:launchconfiguration',
               option_name: 'InstanceType',
-              value: @instance_type
+              value: type
             }
           ]
         }
       )
   end
 
-  def version_exists?
+  def version_exists?(label:)
     response = client
                  .describe_application_versions(
                    {
                      application_name: @application_name,
-                     version_labels: [@version_label]
+                     version_labels: [label]
                    }
                  )
 
@@ -116,8 +116,8 @@ class OpsBot::Integration::AWS::EBS
     @client ||= Aws::ElasticBeanstalk::Client.new
   end
 
-  def download_logs(url:)
-    system("curl '#{url}' --output #{@log_file_path}")
+  def download_logs(file_path:, url:)
+    system("curl '#{url}' --output #{file_path}")
   end
 
   def request_logs

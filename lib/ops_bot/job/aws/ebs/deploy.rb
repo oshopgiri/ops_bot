@@ -3,7 +3,10 @@
 class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
   def self.perform
     build_client = OpsBot::Build.new
-    ebs_client = OpsBot::Integration::AWS::EBS.new
+    ebs_client = OpsBot::Integration::AWS::EBS.new(
+      application_name: OpsBot::Context.env.aws.ebs.application.name,
+      environment_name: OpsBot::Context.env.aws.ebs.application.environment.name
+    )
 
     ebs_version_label = OpsBot::Context.utils.build.version
 
@@ -12,14 +15,22 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
       return false
     end
 
-    if ebs_client.version_exists?
+    if ebs_client.version_exists?(label: ebs_version_label)
       Application.logger.info(
         "Existing application version found on EBS: #{ebs_version_label}, skipping version creation..."
       )
     else
-      ebs_client.create_version
+      ebs_client.create_version(
+        build: {
+          s3: {
+            bucket: OpsBot::Context.env.aws.s3.buckets.build,
+            key: OpsBot::Context.utils.build.s3_key
+          }
+        },
+        label: ebs_version_label
+      )
 
-      if ebs_client.version_exists?
+      if ebs_client.version_exists?(label: ebs_version_label)
         Application.logger.info("Created new EBS application version: #{ebs_version_label}")
       else
         Application.logger.error('Version creation failed. Check logs for errors.')
@@ -27,7 +38,7 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
       end
     end
 
-    ebs_client.deploy_version
+    ebs_client.deploy_version(label: ebs_version_label)
 
     slack_client = OpsBot::Notification::Slack.new
     slack_client.notify(

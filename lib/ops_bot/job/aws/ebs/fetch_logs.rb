@@ -2,8 +2,11 @@
 
 class OpsBot::Job::AWS::EBS::FetchLogs < OpsBot::Job::Base
   def self.perform
-    ebs_client = OpsBot::Integration::AWS::EBS.new
-    ebs_client.retrieve_logs
+    ebs_client = OpsBot::Integration::AWS::EBS.new(
+      application_name: OpsBot::Context.env.aws.ebs.application.name,
+      environment_name: OpsBot::Context.env.aws.ebs.application.environment.name
+    )
+    ebs_client.retrieve_logs(file_path: OpsBot::Context.env.log.file_path)
   end
 
   def self.tags

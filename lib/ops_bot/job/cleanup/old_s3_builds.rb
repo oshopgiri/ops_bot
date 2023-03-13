@@ -2,7 +2,10 @@
 
 class OpsBot::Job::Cleanup::OldS3Builds < OpsBot::Job::Base
   def self.perform
-    ebs_client = OpsBot::Integration::AWS::EBS.new
+    ebs_client = OpsBot::Integration::AWS::EBS.new(
+      application_name: OpsBot::Context.env.aws.ebs.application.name,
+      environment_name: OpsBot::Context.env.aws.ebs.application.environment.name
+    )
     build_hashes = ebs_client.describe_environments.map { |environment| environment.version_label.gsub('ver-', '') }
 
     older_than = OpsBot::Context.env.cleanup.s3_builds.older_than
