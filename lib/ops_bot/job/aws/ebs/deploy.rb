@@ -53,11 +53,14 @@ class OpsBot::Job::AWS::EBS::Deploy < OpsBot::Job::Base
     super
 
     aws_application_context = OpsBot::Context.env.aws.ebs.application
-
+    github_context = OpsBot::Context.env.github
     Application.exception_notifier.set_tags(
       {
         'aws.application': aws_application_context.name,
-        'aws.environment': aws_application_context.environment.name
+        'aws.environment': aws_application_context.environment.name,
+        'github.branch': github_context.branch.ref,
+        'github.commit': github_context.branch.sha,
+        'github.repository': github_context.repository.name
       }
     )
   end

@@ -13,7 +13,6 @@ class OpsBot::Job::AWS::EBS::FetchLogs < OpsBot::Job::Base
     super
 
     aws_application_context = OpsBot::Context.env.aws.ebs.application
-
     Application.exception_notifier.set_tags(
       {
         'aws.application': aws_application_context.name,

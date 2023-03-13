@@ -26,4 +26,14 @@ class OpsBot::Job::Build < OpsBot::Job::Base
 
     true
   end
+
+  def self.tags
+    super
+
+    Application.exception_notifier.set_tags(
+      {
+        'build.type': OpsBot::Context.env.build.type
+      }
+    )
+  end
 end

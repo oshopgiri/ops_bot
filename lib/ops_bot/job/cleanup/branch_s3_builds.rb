@@ -7,4 +7,14 @@ class OpsBot::Job::Cleanup::BranchS3Builds < OpsBot::Job::Base
 
     true
   end
+
+  def self.tags
+    super
+
+    Application.exception_notifier.set_tags(
+      {
+        'github.branch': OpsBot::Context.env.github.event.branch.ref
+      }
+    )
+  end
 end
