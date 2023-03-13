@@ -7,7 +7,7 @@ class OpsBot::Build::Base
 
     @name = OpsBot::Context.utils.build.name
     @path = OpsBot::Context.utils.build.path
-    @s3_directory_key = OpsBot::Context.utils.build.s3_directory_key
+    @s3_directory_key = OpsBot::Context.utils.cleanup.s3_directory_key
     @s3_key = OpsBot::Context.utils.build.s3_key
 
     @s3_client = OpsBot::Integration::AWS::S3.new(bucket: OpsBot::Context.env.aws.s3.buckets.build)
