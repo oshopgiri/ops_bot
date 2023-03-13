@@ -5,10 +5,10 @@ class OpsBot::Integration::AWS::EBS
 
   def initialize
     @application_name = OpsBot::Context.env.aws.ebs.application.name
-    @build_s3_bucket = OpsBot::Context.env.aws.s3.buckets.build
     @environment_name = OpsBot::Context.env.aws.ebs.application.environment.name
     @instance_type = OpsBot::Context.env.aws.ebs.application.environment.config.instance_type
     @log_file_path = OpsBot::Context.env.log.file_path
+    @s3_bucket = OpsBot::Context.env.aws.s3.buckets.build
 
     @build_s3_key = OpsBot::Context.utils.build.s3_key
     @version_label = OpsBot::Context.utils.build.version
@@ -20,7 +20,7 @@ class OpsBot::Integration::AWS::EBS
         {
           application_name: @application_name,
           source_bundle: {
-            s3_bucket: @build_s3_bucket,
+            s3_bucket: @s3_bucket,
             s3_key: @build_s3_key
           },
           version_label: @version_label
@@ -55,8 +55,12 @@ class OpsBot::Integration::AWS::EBS
 
   def describe_environment
     response = client.describe_environments({ environment_names: [@environment_name] })
-
     response.environments&.first
+  end
+
+  def describe_environments
+    response = client.describe_environments
+    response.environments
   end
 
   def retrieve_logs
