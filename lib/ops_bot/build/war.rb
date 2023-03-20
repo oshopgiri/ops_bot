@@ -3,9 +3,7 @@
 class OpsBot::Build::WAR < OpsBot::Build::Base
   def package
     system("cd #{@source_directory} && mvn package -q -f pom.xml")
-    FileUtils.mv(
-      Dir["#{@source_directory}/target/**.war"].first,
-      @path
-    )
+    build_file = Dir["#{@source_directory}/target/**.war"].first
+    FileUtils.mv(build_file, @path) if exists?(path: build_file)
   end
 end

@@ -11,8 +11,8 @@ class OpsBot::Build::Base
     @s3_client = OpsBot::Integration::AWS::S3.new(bucket: OpsBot::Context.env.aws.s3.buckets.build)
   end
 
-  def exists?
-    File.file?(@path)
+  def exists?(path: @path)
+    File.file?(path)
   end
 
   def package
