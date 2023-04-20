@@ -18,7 +18,7 @@ class OpsBot::Integration::AWS::EC2::SecurityGroup
                                            }
                                          )
                                          .security_group_rules
-                                         .select { |rule| rule.description.include? description_matcher }
+                                         .select { |rule| rule.description&.include? description_matcher }
                                          .map(&:security_group_rule_id)
 
     return unless existing_security_group_rule_ids.present?
