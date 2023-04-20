@@ -25,8 +25,8 @@ class OpsBot::Job::AWS::EC2::SecurityGroup::WhitelistIP < OpsBot::Job::Base
     aws_application_context = OpsBot::Context.env.aws.ebs.application
     Application.exception_notifier.set_tags(
       {
-        'aws.application': aws_application_context.name,
-        'aws.environment': aws_application_context.environment.name
+        'github.username': OpsBot::Context.env.github.actor.username,
+        'github.action.inputs.ip_address': OpsBot::Context.env.aws.ec2.security_group.rule.ip_address
       }
     )
   end
