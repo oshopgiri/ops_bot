@@ -12,6 +12,8 @@ class OpsBot::Build::Base
   end
 
   def exists?(path: @path)
+    return false unless path
+
     File.file?(path)
   end
 
