@@ -1,0 +1,52 @@
+name: (AWS CloudFront) Create Invalidation
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      paths:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_CLOUD_FRONT_DISTRIBUTION_ID:
+        required: true
+      SENTRY_DSN:
+        required: true
+
+env:
+  APP_ENV: production
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_CLOUD_FRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID }}
+  AWS_CLOUD_FRONT_INVALIDATION_PATHS: ${{ inputs.paths }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
+
+jobs:
+  create_invalidation:
+    environment:
+      name: ${{ inputs.environment }}
+    name: ${{ github.event.ref }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/ops_bot
+          ref: main
+          path: ./
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Creating CDN cache invalidation
+        run: ruby ./bin/aws/cloud_front/create_invalidation.rb

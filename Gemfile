@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'activesupport'
+gem 'aws-sdk-cloudfront'
 gem 'aws-sdk-ec2'
 gem 'aws-sdk-elasticbeanstalk'
 gem 'aws-sdk-iam'
