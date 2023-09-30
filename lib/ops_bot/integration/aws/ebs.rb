@@ -44,7 +44,7 @@ class OpsBot::Integration::AWS::EBS
         "Version deployment failed as instance is not Ready. (retrying #{try} of #{MAX_RETRIES})"
       )
       if try < MAX_RETRIES
-        sleep((try * 10).seconds)
+        sleep((try * 10).seconds.to_i)
         retry
       end
     end
@@ -129,6 +129,6 @@ class OpsBot::Integration::AWS::EBS
         }
       )
 
-    sleep(30.seconds)
+    sleep(30.seconds.to_i)
   end
 end

@@ -13,7 +13,7 @@ class OpsBot::Integration::AWS::IAM
 
     try = 0
     begin
-      sleep(10.seconds)
+      sleep(10.seconds.to_i)
 
       new_client
         .update_access_key(
@@ -23,7 +23,7 @@ class OpsBot::Integration::AWS::IAM
             user_name: @user_name
           }
         )
-    rescue
+    rescue StandardError
       try += 1
       retry if try < MAX_RETRIES
     end
@@ -36,7 +36,7 @@ class OpsBot::Integration::AWS::IAM
 
     try = 0
     begin
-      sleep(10.seconds)
+      sleep(10.seconds.to_i)
 
       new_client
         .delete_access_key(
@@ -45,7 +45,7 @@ class OpsBot::Integration::AWS::IAM
             user_name: @user_name
           }
         )
-    rescue
+    rescue StandardError
       try += 1
       retry if try < MAX_RETRIES
     end
