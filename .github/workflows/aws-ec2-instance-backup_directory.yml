@@ -32,8 +32,6 @@ on:
         required: true
       SENTRY_DSN:
         required: true
-      SLACK_BOT_TOKEN:
-        required: true
 
 env:
   APP_ENV: production
@@ -42,11 +40,9 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_EC2_SECURITY_GROUP_ID: ${{ secrets.AWS_EC2_SECURITY_GROUP_ID }}
   AWS_EC2_SECURITY_GROUP_RULE_DESCRIPTION: ${{ inputs.actor }}
-#  AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS: ${{ inputs.ip_address }}
   AWS_EC2_SECURITY_GROUP_RULE_PORT: 22
   AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL: ssh
   AWS_S3_BACKUP_BUCKET_NAME: ${{ vars.AWS_S3_BACKUP_BUCKET_NAME }}
-#  BACKUP_FILE_NAME: backup-$(date +'%Y-%m-%d').zip
   BACKUP_DOWNLOAD_DIRECTORY: ~/
   BACKUP_REMOTE_DIRECTORY: ${{ inputs.backup_remote_directory }}
   BACKUP_S3_DIRECTORY: ${{ inputs.backup_s3_directory }}
