@@ -1,0 +1,97 @@
+name: (AWS EC2 Instance) Backup Directory
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      actor:
+        required: true
+        type: string
+      backup_remote_directory:
+        required: true
+        type: string
+      backup_s3_directory:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_EC2_SECURITY_GROUP_ID:
+        required: true
+      AWS_EC2_SSH_PRIVATE_KEY:
+        required: true
+      AWS_EC2_SSH_USERNAME:
+        required: true
+      AWS_EC2_SSH_HOSTNAME:
+        required: true
+      SENTRY_DSN:
+        required: true
+      SLACK_BOT_TOKEN:
+        required: true
+
+env:
+  APP_ENV: production
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_EC2_SECURITY_GROUP_ID: ${{ secrets.AWS_EC2_SECURITY_GROUP_ID }}
+  AWS_EC2_SECURITY_GROUP_RULE_DESCRIPTION: ${{ inputs.actor }}
+#  AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS: ${{ inputs.ip_address }}
+  AWS_EC2_SECURITY_GROUP_RULE_PORT: 22
+  AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL: ssh
+  AWS_S3_BACKUP_BUCKET_NAME: ${{ vars.AWS_S3_BACKUP_BUCKET_NAME }}
+#  BACKUP_FILE_NAME: backup-$(date +'%Y-%m-%d').zip
+  BACKUP_DOWNLOAD_DIRECTORY: ~/
+  BACKUP_REMOTE_DIRECTORY: ${{ inputs.backup_remote_directory }}
+  BACKUP_S3_DIRECTORY: ${{ inputs.backup_s3_directory }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  WORKFLOW_ENVIRONMENT: ${{ inputs.environment }}
+
+jobs:
+  backup:
+    environment:
+      name: ${{ inputs.environment }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Fetching runner's IP
+        id: runner-ip
+        uses: haythem/public-ip@v1.3
+      - name: Pushing runner's IP to ENV
+        run: echo "AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS=${{ steps.runner-ip.outputs.ipv4 }}" >> $GITHUB_ENV
+        shell: bash
+      - name: Pushing backup file name to ENV
+        run: echo "BACKUP_FILE_NAME=backup-$(date +'%Y-%m-%d').zip" >> $GITHUB_ENV
+        shell: bash
+      - name: Checking-out remote scripts
+        uses: actions/checkout@v3
+        with:
+          repository: oshopgiri/ops_bot
+          ref: oshopgiri/wp_nfs_backup_action
+      - name: Setting-up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Whitelisting runner IP
+        run: ruby ./bin/aws/ec2/security_group/whitelist_ip.rb
+      - name: Setting up SSH config
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
+        shell: bash
+      - name: Creating backup in remote client
+        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }} '
+            sudo zip -qr $BACKUP_NAME $BACKUP_DIRECTORY
+          '
+        shell: bash
+      - name: Downloading backup from remote client
+        run: scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/$BACKUP_NAME ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
+      - name: Uploading backup to S3
+        run: ruby ./bin/backup/upload.rb
+
