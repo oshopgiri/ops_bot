@@ -60,10 +60,8 @@ jobs:
         uses: haythem/public-ip@v1.3
       - name: Pushing runner's IP to ENV
         run: echo "AWS_EC2_SECURITY_GROUP_RULE_IP_ADDRESS=${{ steps.runner-ip.outputs.ipv4 }}" >> $GITHUB_ENV
-        shell: bash
       - name: Pushing backup file name to ENV
         run: echo "BACKUP_FILE_NAME=backup-$(date +'%Y-%m-%d').zip" >> $GITHUB_ENV
-        shell: bash
       - name: Checking-out remote scripts
         uses: actions/checkout@v3
         with:
@@ -82,12 +80,15 @@ jobs:
           chmod 400 ~/.ssh/id_rsa
         shell: bash
       - name: Creating backup in remote client
-        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }} '
+        run: | 
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }} '
             sudo zip -qr $BACKUP_NAME $BACKUP_DIRECTORY
           '
         shell: bash
       - name: Downloading backup from remote client
-        run: scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/$BACKUP_NAME ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
+        run: | 
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/$BACKUP_NAME ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
+        shell: bash
       - name: Uploading backup to S3
         run: ruby ./bin/backup/upload.rb
 
