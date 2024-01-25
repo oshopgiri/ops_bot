@@ -67,12 +67,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: oshopgiri/ops_bot
-          ref: oshopgiri/wp_nfs_backup_action
+          ref: main
       - name: Setting-up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Whitelisting runner IP
+      - name: Whitelisting runner's IP
         run: ruby ./bin/aws/ec2/security_group/whitelist_ip.rb
       - name: Creating backup on remote client
         uses: appleboy/ssh-action@v1.0.3
