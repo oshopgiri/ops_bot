@@ -104,7 +104,7 @@ jobs:
           username: ${{ secrets.AWS_EC2_SSH_USERNAME }}
           key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
           insecure_ignore_fingerprint: true
-          source: ~/${{ env.BACKUP_FILE_NAME }}
+          source: /home/${{ secrets.AWS_EC2_SSH_USERNAME }}/${{ env.BACKUP_FILE_NAME }}
           target: ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}/${{ env.BACKUP_FILE_NAME }}
 #        run: |
 #          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/${{ env.BACKUP_FILE_NAME }} ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
