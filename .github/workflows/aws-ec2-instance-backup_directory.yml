@@ -43,7 +43,7 @@ env:
   AWS_EC2_SECURITY_GROUP_RULE_PORT: 22
   AWS_EC2_SECURITY_GROUP_RULE_PROTOCOL: tcp
   AWS_S3_BACKUP_BUCKET_NAME: ${{ vars.AWS_S3_BACKUP_BUCKET_NAME }}
-  BACKUP_DOWNLOAD_DIRECTORY: "~"
+  BACKUP_DOWNLOAD_DIRECTORY: .
   BACKUP_REMOTE_DIRECTORY: ${{ inputs.backup_remote_directory }}
   BACKUP_S3_DIRECTORY: ${{ inputs.backup_s3_directory }}
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -96,8 +96,6 @@ jobs:
 #            sudo zip -qr ${{ env.BACKUP_FILE_NAME }} ${{ env.BACKUP_REMOTE_DIRECTORY }}
 #          '
 #        shell: bash
-      - name: Print current directory
-        run: pwd
       - name: Downloading backup from remote client
         uses: nicklasfrahm/scp-action@v1.0.1
         with:
@@ -106,7 +104,7 @@ jobs:
           username: ${{ secrets.AWS_EC2_SSH_USERNAME }}
           key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
           insecure_ignore_fingerprint: true
-          source: /home/${{ secrets.AWS_EC2_SSH_USERNAME }}/${{ env.BACKUP_FILE_NAME }}
+          source: ~/${{ env.BACKUP_FILE_NAME }}
           target: ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}/${{ env.BACKUP_FILE_NAME }}
 #        run: |
 #          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/${{ env.BACKUP_FILE_NAME }} ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
