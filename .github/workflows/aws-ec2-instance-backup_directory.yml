@@ -7,7 +7,7 @@ on:
         required: true
         type: string
       actor:
-        required: false
+        required: true
         type: string
       backup_remote_directory:
         required: true
