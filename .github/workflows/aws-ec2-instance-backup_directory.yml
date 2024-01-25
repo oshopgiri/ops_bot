@@ -74,12 +74,12 @@ jobs:
           bundler-cache: true
       - name: Whitelisting runner IP
         run: ruby ./bin/aws/ec2/security_group/whitelist_ip.rb
-      - name: Setting up SSH config
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
-        shell: bash
+#      - name: Setting up SSH config
+#        run: |
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+#          chmod 400 ~/.ssh/id_rsa
+#        shell: bash
       - name: Creating backup in remote client
         uses: appleboy/ssh-action@v1.0.3
         env:
@@ -88,7 +88,7 @@ jobs:
         with:
           host: ${{ secrets.AWS_EC2_SSH_HOSTNAME }}
           username: ${{ secrets.AWS_EC2_SSH_USERNAME }}
-          key_path: ~/.ssh/id_rsa
+          key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
           envs: BACKUP_NAME,BACKUP_DIRECTORY
           script: |
             sudo zip -qr $BACKUP_NAME $BACKUP_DIRECTORY
@@ -101,7 +101,7 @@ jobs:
         with:
           host: ${{ secrets.AWS_EC2_SSH_HOSTNAME }}
           username: ${{ secrets.AWS_EC2_SSH_USERNAME }}
-          key_path: ~/.ssh/id_rsa
+          key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
           source: ~/${{ env.BACKUP_NAME }}
           target: ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
 #        run: |
