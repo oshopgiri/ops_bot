@@ -103,6 +103,7 @@ jobs:
           host: ${{ secrets.AWS_EC2_SSH_HOSTNAME }}
           username: ${{ secrets.AWS_EC2_SSH_USERNAME }}
           key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
+          insecure_ignore_fingerprint: true
           source: ~/${{ env.BACKUP_FILE_NAME }}
           target: ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}/${{ env.BACKUP_FILE_NAME }}
 #        run: |
