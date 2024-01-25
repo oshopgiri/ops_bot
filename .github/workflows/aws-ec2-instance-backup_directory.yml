@@ -64,7 +64,7 @@ jobs:
       - name: Pushing backup file name to ENV
         run: echo "BACKUP_FILE_NAME=backup-$(date +'%Y-%m-%d').zip" >> $GITHUB_ENV
       - name: Checking-out remote scripts
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: oshopgiri/ops_bot
           ref: oshopgiri/wp_nfs_backup_action
@@ -83,17 +83,17 @@ jobs:
       - name: Creating backup in remote client
         uses: appleboy/ssh-action@v1.0.3
         env:
-          BACKUP_NAME: ${{ env.BACKUP_NAME }}
-          BACKUP_DIRECTORY: ${{ env.BACKUP_DIRECTORY }}
+          BACKUP_FILE_NAME: ${{ env.BACKUP_FILE_NAME }}
+          BACKUP_REMOTE_DIRECTORY: ${{ env.BACKUP_REMOTE_DIRECTORY }}
         with:
           host: ${{ secrets.AWS_EC2_SSH_HOSTNAME }}
           username: ${{ secrets.AWS_EC2_SSH_USERNAME }}
           key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
-          envs: BACKUP_NAME,BACKUP_DIRECTORY
+          envs: BACKUP_FILE_NAME,BACKUP_REMOTE_DIRECTORY
           script: |
-            sudo zip -qr $BACKUP_NAME $BACKUP_DIRECTORY
+            sudo zip -r $BACKUP_FILE_NAME $BACKUP_REMOTE_DIRECTORY
 #          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }} '
-#            sudo zip -qr ${{ env.BACKUP_NAME }} ${{ env.BACKUP_DIRECTORY }}
+#            sudo zip -qr ${{ env.BACKUP_FILE_NAME }} ${{ env.BACKUP_REMOTE_DIRECTORY }}
 #          '
 #        shell: bash
       - name: Downloading backup from remote client
@@ -102,10 +102,10 @@ jobs:
           host: ${{ secrets.AWS_EC2_SSH_HOSTNAME }}
           username: ${{ secrets.AWS_EC2_SSH_USERNAME }}
           key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
-          source: ~/${{ env.BACKUP_NAME }}
+          source: ~/${{ env.BACKUP_FILE_NAME }}
           target: ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
 #        run: |
-#          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/${{ env.BACKUP_NAME }} ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
+#          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/${{ env.BACKUP_FILE_NAME }} ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
 #        shell: bash
       - name: Uploading backup to S3
         run: ruby ./bin/backup/upload.rb
