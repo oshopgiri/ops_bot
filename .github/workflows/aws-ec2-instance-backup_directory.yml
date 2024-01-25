@@ -82,12 +82,12 @@ jobs:
       - name: Creating backup in remote client
         run: | 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }} '
-            sudo zip -qr $BACKUP_NAME $BACKUP_DIRECTORY
+            sudo zip -qr ${{ env.BACKUP_NAME }} ${{ env.BACKUP_DIRECTORY }}
           '
         shell: bash
       - name: Downloading backup from remote client
         run: | 
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/$BACKUP_NAME ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/${{ env.BACKUP_NAME }} ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
         shell: bash
       - name: Uploading backup to S3
         run: ruby ./bin/backup/upload.rb
