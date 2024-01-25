@@ -74,13 +74,7 @@ jobs:
           bundler-cache: true
       - name: Whitelisting runner IP
         run: ruby ./bin/aws/ec2/security_group/whitelist_ip.rb
-#      - name: Setting up SSH config
-#        run: |
-#          mkdir -p ~/.ssh
-#          echo "${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-#          chmod 400 ~/.ssh/id_rsa
-#        shell: bash
-      - name: Creating backup in remote client
+      - name: Creating backup on remote client
         uses: appleboy/ssh-action@v1.0.3
         env:
           BACKUP_FILE_NAME: ${{ env.BACKUP_FILE_NAME }}
@@ -91,11 +85,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
           envs: BACKUP_FILE_NAME,BACKUP_REMOTE_DIRECTORY
           script: |
-            sudo zip -r $BACKUP_FILE_NAME $BACKUP_REMOTE_DIRECTORY
-#          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }} '
-#            sudo zip -qr ${{ env.BACKUP_FILE_NAME }} ${{ env.BACKUP_REMOTE_DIRECTORY }}
-#          '
-#        shell: bash
+            sudo zip -qr $BACKUP_FILE_NAME $BACKUP_REMOTE_DIRECTORY
       - name: Downloading backup from remote client
         uses: nicklasfrahm/scp-action@v1.0.1
         with:
@@ -106,9 +96,16 @@ jobs:
           insecure_ignore_fingerprint: true
           source: ~/${{ env.BACKUP_FILE_NAME }}
           target: ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}/${{ env.BACKUP_FILE_NAME }}
-#        run: |
-#          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_SSH_USERNAME }}@${{ secrets.AWS_EC2_SSH_HOSTNAME }}:~/${{ env.BACKUP_FILE_NAME }} ${{ env.BACKUP_DOWNLOAD_DIRECTORY }}
-#        shell: bash
       - name: Uploading backup to S3
         run: ruby ./bin/backup/upload.rb
-
+      - name: Deleting backup from remote client
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          BACKUP_FILE_NAME: ${{ env.BACKUP_FILE_NAME }}
+        with:
+          host: ${{ secrets.AWS_EC2_SSH_HOSTNAME }}
+          username: ${{ secrets.AWS_EC2_SSH_USERNAME }}
+          key: ${{ secrets.AWS_EC2_SSH_PRIVATE_KEY }}
+          envs: BACKUP_FILE_NAME
+          script: |
+            sudo rm -f $BACKUP_FILE_NAME
