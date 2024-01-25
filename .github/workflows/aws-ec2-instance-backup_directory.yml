@@ -96,6 +96,8 @@ jobs:
 #            sudo zip -qr ${{ env.BACKUP_FILE_NAME }} ${{ env.BACKUP_REMOTE_DIRECTORY }}
 #          '
 #        shell: bash
+      - name: Print current directory
+        run: echo pwd
       - name: Downloading backup from remote client
         uses: nicklasfrahm/scp-action@v1.0.1
         with:
