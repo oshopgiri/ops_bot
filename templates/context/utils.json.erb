@@ -19,10 +19,14 @@
     "ec2": {
       "security_group": {
         "rule": {
-          "description": "<%= "github-#{OpsBot::Context.env.github.actor.username}" %>"
+          "description": "<%= OpsBot::Context.env.aws.ec2.security_group.rule.description.presence || "github-#{OpsBot::Context.env.github.actor.username}" %>"
         }
       }
     }
+  },
+  "backup": {
+    "path": "<%= "#{OpsBot::Context.env.backup.download_directory}/#{OpsBot::Context.env.backup.file_name}" %>",
+    "s3_key": "<%= "#{OpsBot::Context.env.backup.s3_directory}/#{OpsBot::Context.env.backup.file_name}" %>"
   },
   "build": {
     "name": "<%= "ref-#{OpsBot::Context.env.github.branch.sha}.#{OpsBot::Context.env.build.type}" %>",
