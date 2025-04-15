@@ -144,7 +144,7 @@ DEPENDENCIES
   rspec
   rubocop
   sentry-ruby
-  slack-ruby-client (> 2)
+  slack-ruby-client (~> 2.4)
   tilt
   zeitwerk
 
