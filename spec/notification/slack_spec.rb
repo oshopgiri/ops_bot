@@ -12,8 +12,6 @@ RSpec.describe OpsBot::Notification::Slack, type: :notification do
     before do
       allow(described_class).to receive(:render).and_return('')
       allow_any_instance_of(client_klass).to receive(:auth_test)
-      allow_any_instance_of(client_klass).to receive(:client)
-                                               .and_return(Slack::Web::Client.new(token: 'abc', ca_file: nil, ca_path: nil))
 
       allow(OpsBot::Context.env.slack.channels).to receive(:notification).and_return('test')
     end
