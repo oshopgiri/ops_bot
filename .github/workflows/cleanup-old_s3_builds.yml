@@ -34,7 +34,7 @@ jobs:
     environment:
       name: ${{ inputs.environment }}
     name: ${{ inputs.older_than }} days
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checking-out remote scripts
         uses: actions/checkout@v3

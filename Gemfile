@@ -11,7 +11,7 @@ gem 'aws-sdk-s3'
 gem 'nokogiri'
 gem 'pathname'
 gem 'sentry-ruby'
-gem 'slack-ruby-client'
+gem 'slack-ruby-client', '~> 2.4'
 gem 'tilt'
 gem 'zeitwerk'
 
