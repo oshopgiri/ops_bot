@@ -27,6 +27,6 @@ class OpsBot::Notification::Slack < OpsBot::Notification::Base
   private
 
   def client
-    @client ||= ::Slack::Web::Client.new
+    @client ||= ::Slack::Web::Client.new(ca_file: nil, ca_path: nil)
   end
 end
