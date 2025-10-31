@@ -32,7 +32,7 @@ jobs:
     environment:
       name: ${{ inputs.environment }}
     name: ${{ inputs.environment }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Logging run context
         run: |
